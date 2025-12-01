@@ -3,33 +3,51 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>名古屋・白川鄉冬旅 (V28)</title>
+    <title>名古屋・白川鄉冬旅 (fn)</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
     <style>
         /* --- UI 設定 --- */
-        :root { --primary-color: #5856D6; --bg-color: #F5F5FA; --card-bg: #FFFFFF; --danger-color: #FF3B30; --success-color: #34C759; --text-dark: #1C1C1E; --text-gray: #8E8E93; --line-color: #E5E5EA; }
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: var(--bg-color); margin: 0; padding: 0; padding-top: 180px; padding-bottom: 80px; -webkit-tap-highlight-color: transparent; color: var(--text-dark); }
+        :root {
+            --primary-color: #5856D6; --bg-color: #F5F5FA; --card-bg: #FFFFFF;
+            --danger-color: #FF3B30; --success-color: #34C759; --text-dark: #1C1C1E; --text-gray: #8E8E93; --line-color: #E5E5EA;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg-color); margin: 0; padding: 0;
+            padding-top: 240px; /* 預留表頭空間 */
+            padding-bottom: 80px; -webkit-tap-highlight-color: transparent; color: var(--text-dark);
+        }
 
         /* Header */
-        .header { background: var(--primary-color); padding: 15px 20px 0px 20px; border-bottom-left-radius: 24px; border-bottom-right-radius: 24px; color: white; box-shadow: 0 4px 20px rgba(88, 86, 214, 0.4); position: fixed; top: 0; left: 0; right: 0; z-index: 1000; }
-        .header-top-row { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; }
-        .trip-title { font-size: 20px; font-weight: 800; letter-spacing: 0.5px; line-height: 1.2; border-bottom: 1px dashed transparent; }
+        .header {
+            background: var(--primary-color); padding: 15px 20px 0px 20px;
+            border-bottom-left-radius: 24px; border-bottom-right-radius: 24px;
+            color: white; box-shadow: 0 4px 20px rgba(88, 86, 214, 0.4);
+            position: fixed; top: 0; left: 0; right: 0; 
+            z-index: 1000; /* 降低一點，讓 Modal 有機會浮上來 (雖然筆記改分頁了，但設定Modal還在) */
+            height: auto;
+        }
+
+        .header-top-row { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .title-group { width: 100%; margin-bottom: 10px; }
+        .trip-title { font-size: 22px; font-weight: 800; letter-spacing: 0.5px; line-height: 1.2; border-bottom: 1px dashed transparent; }
         .trip-subtitle { font-size: 13px; opacity: 0.8; margin-top: 4px; font-weight: 500; border-bottom: 1px dashed transparent; display: inline-block; cursor: pointer;}
         
-        .controls { display: flex; gap: 6px; }
-        .view-btn { width: 34px; height: 34px; border-radius: 10px; border: none; background: rgba(255,255,255,0.2); color: rgba(255,255,255,0.8); display: flex; align-items: center; justify-content: center; font-size: 15px; cursor: pointer; transition: 0.2s; }
+        .controls { width: 100%; display: flex; justify-content: flex-end; gap: 8px; margin-bottom: 5px; }
+        .view-btn { width: 36px; height: 36px; border-radius: 10px; border: none; background: rgba(255,255,255,0.2); color: rgba(255,255,255,0.8); display: flex; align-items: center; justify-content: center; font-size: 16px; cursor: pointer; transition: 0.2s; }
         .view-btn.active { background: white; color: var(--primary-color); font-weight: bold; box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
-        .edit-toggle { height: 34px; padding: 0 10px; border-radius: 10px; border: none; background: rgba(0,0,0,0.2); color: white; font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 5px; cursor: pointer; }
+        .edit-toggle { height: 36px; padding: 0 12px; border-radius: 10px; border: none; background: rgba(0,0,0,0.2); color: white; font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 5px; cursor: pointer; }
         .edit-toggle.editing { background: var(--success-color); }
 
         /* Tabs */
-        .tabs-container { padding-bottom: 15px; overflow: hidden; }
+        .tabs-container { padding-bottom: 15px; overflow: hidden; margin-top: 5px; }
         .tabs { display: flex; overflow-x: auto; gap: 10px; scrollbar-width: none; padding: 4px; }
         .tabs::-webkit-scrollbar { display: none; }
         .tab-btn { background: rgba(255,255,255,0.15); border: none; color: rgba(255,255,255,0.8); padding: 8px 0; border-radius: 14px; width: 60px; flex-shrink: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; }
         .tab-btn.active { background: white; color: var(--primary-color); font-weight: bold; transform: scale(1.05); box-shadow: 0 4px 10px rgba(0,0,0,0.2); color: var(--primary-color) !important; }
         .tab-date { font-size: 10px; margin-bottom: 2px; } .tab-day { font-size: 16px; font-weight: 800; }
+        
         .sub-tabs { display: none; justify-content: flex-start; gap: 10px; padding: 4px; }
         .sub-tab-btn { background: rgba(0,0,0,0.2); color: rgba(255,255,255,0.8); border: none; padding: 8px 20px; border-radius: 20px; font-size: 14px; font-weight: 600; cursor: pointer; }
         .sub-tab-btn.active { background: white; color: var(--primary-color); }
@@ -44,18 +62,41 @@
         .timeline-item:last-child::before { display: none; }
         .timeline-item::after { content: ''; position: absolute; left: 9px; top: 25px; width: 12px; height: 12px; background: var(--primary-color); border-radius: 50%; border: 2px solid white; box-shadow: 0 0 0 2px var(--primary-color); z-index: 2; }
         
-        .card { background: var(--card-bg); border-radius: 20px; padding: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.02); display: flex; gap: 15px; position: relative; overflow: visible !important; }
+        .card { 
+            background: var(--card-bg); border-radius: 20px; padding: 15px; 
+            box-shadow: 0 2px 10px rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.02); 
+            display: flex; gap: 15px; position: relative; 
+            overflow: visible !important; 
+        }
         
-        /* Elements controlled by JS Inline Style now */
-        .delete-btn { position: absolute; right: -10px; top: -10px; width: 26px; height: 26px; background: var(--danger-color); color: white; border-radius: 50%; display: none; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.3); cursor: pointer; z-index: 9999; font-size: 14px; border: 2px solid white; }
-        .drag-handle { position: absolute; left: -35px; top: 50%; transform: translateY(-50%); color: #CCC; font-size: 20px; padding: 10px; cursor: grab; z-index: 5; display: none; font-weight: bold; }
+        .delete-btn { 
+            position: absolute; right: -10px; top: -10px; width: 26px; height: 26px; 
+            background: var(--danger-color); color: white; border-radius: 50%; 
+            display: none; align-items: center; justify-content: center; 
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3); cursor: pointer; 
+            z-index: 100; font-size: 14px; border: 2px solid white;
+        }
+        body.is-editing .delete-btn { display: flex !important; }
+
+        .drag-handle { 
+            position: absolute; left: -35px; top: 50%; transform: translateY(-50%); 
+            color: #CCC; font-size: 20px; padding: 10px; cursor: grab; z-index: 5;
+            display: none; font-weight: bold;
+        }
+        body.is-editing .drag-handle { display: block !important; }
+
         .add-btn-container { text-align: center; margin-top: 20px; display: none; }
+        body.is-editing .add-btn-container { display: block !important; }
         .add-btn { background: var(--primary-color); color: white; border: none; padding: 12px 30px; border-radius: 30px; font-size: 15px; font-weight: 600; box-shadow: 0 4px 10px rgba(88,86,214,0.3); }
+
         .type-select { margin-top: 6px; width: 100%; font-size: 11px; display: none; border: 1px solid #ddd; padding: 4px; border-radius: 6px; }
         .type-badge { margin-top: 6px; padding: 3px 8px; border-radius: 8px; font-size: 10px; background: #F2F2F7; display: inline-block;}
+        body.is-editing .type-badge { display: none !important; }
+        body.is-editing .type-select { display: block !important; }
 
-        /* Edit Mode Helpers */
-        body.is-editing .info-title, body.is-editing .info-loc span, body.is-editing .info-note, body.is-editing .time { border-bottom: 1px dashed #999; background: rgba(255,255,0,0.1); min-width: 20px; }
+        body.is-editing .info-title, body.is-editing .info-loc span, body.is-editing .info-note, body.is-editing .time { 
+            border-bottom: 1px dashed #999; background: rgba(255,255,0,0.1); min-width: 20px; 
+        }
 
         /* Time & Info */
         .time-col { display: flex; flex-direction: column; align-items: center; min-width: 65px; border-right: 1px dashed #EEE; padding-right: 15px; padding-top: 5px; }
@@ -66,8 +107,12 @@
         .info-loc { font-size: 12px; color: var(--text-gray); display: flex; align-items: center; gap: 5px; flex-wrap: wrap; }
         .nav-btn { background: rgba(88, 86, 214, 0.1); color: var(--primary-color); padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: 700; text-decoration: none; display: inline-flex; align-items: center; gap: 2px; }
         .info-note { font-size: 13px; color: #FF9500; font-weight: 500; margin-top: 2px; }
+        
+        /* Memo Box */
         .memo-box { margin-top: 8px; background: #FFF9E6; border-left: 3px solid #FFCC00; padding: 8px; border-radius: 6px; font-size: 12px; color: #665C3B; display: none; white-space: pre-wrap;}
         .memo-box.show { display: block; }
+        .memo-controls { display: none; margin-top: 5px; font-size: 12px; }
+        body.is-editing .memo-controls { display: block !important; }
 
         /* Checklist */
         .checklist-container { padding: 10px 20px; }
@@ -81,33 +126,61 @@
         .check-item.checked .item-text { text-decoration: line-through; color: #CCC; }
         
         .del-check-btn, .del-cat-btn, .add-check-row, .add-cat-btn { display: none; }
+        body.is-editing .del-check-btn, body.is-editing .del-cat-btn, body.is-editing .add-check-row, body.is-editing .add-cat-btn { display: block !important; }
         .add-cat-btn { width: 100%; text-align: center; padding: 15px; background: white; border: 2px dashed #DDD; border-radius: 12px; color: #AAA; margin-top: 10px; cursor: pointer;}
         .del-check-btn { color: var(--danger-color); margin-left: auto; cursor: pointer; font-weight:bold; padding:0 10px;}
         .del-cat-btn { position: absolute; top: 15px; right: 15px; color: #ccc; font-size: 12px; cursor: pointer; }
         .add-check-btn { color: var(--link-color); font-size: 13px; padding-top: 5px; cursor: pointer; text-align: center;}
 
-        /* Expense & Notes Grid */
+        /* Expense */
         .expense-summary { background: white; padding: 20px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 20px; text-align: center; }
         .total-amount { font-size: 32px; font-weight: 800; color: var(--primary-color); margin: 10px 0; }
+        .total-sub { font-size: 13px; color: var(--text-gray); }
         .expense-item { display: flex; justify-content: space-between; align-items: center; padding: 15px; background: white; border-radius: 16px; margin-bottom: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
         .expense-input-row { display: flex; gap: 10px; margin-bottom: 20px; }
         .exp-input { flex: 1; padding: 12px; border: 1px solid #DDD; border-radius: 12px; font-size: 14px; }
         .exp-select { padding: 10px; border: 1px solid #DDD; border-radius: 12px; background: white; }
-        .notes-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 5px; max-height: 60vh; overflow-y: auto; }
-        .note-card { background: #FFF9C4; border-radius: 12px; padding: 15px; min-height: 120px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); position: relative; }
-        .note-del-btn { position: absolute; top: 5px; right: 5px; width: 20px; height: 20px; background: rgba(0,0,0,0.1); border-radius: 50%; color: white; display: flex; align-items: center; justify-content: center; font-size: 12px; cursor: pointer;}
+        .rate-setting { font-size: 12px; color: #888; text-align: center; margin-bottom: 10px; cursor: pointer; text-decoration: underline;}
 
-        /* Modals & Editor */
-        #note-editor-view { display: none; flex-direction: column; height: 100%; }
-        .editor-toolbar { display: flex; justify-content: space-between; margin-bottom: 15px; }
+        /* Notes Grid (Page View) */
+        .notes-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 5px; }
+        .note-card { 
+            background: #FFF9C4; border-radius: 12px; padding: 15px; min-height: 140px; 
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1); position: relative; 
+            display: flex; flex-direction: column; justify-content: space-between; cursor: pointer;
+        }
+        .note-preview { font-size: 13px; color: #555; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 5; -webkit-box-orient: vertical; line-height: 1.4; white-space: pre-wrap;}
+        .note-date { font-size: 10px; color: #999; margin-top: 10px; text-align: right; }
+        .note-del-btn { 
+            position: absolute; top: 5px; right: 5px; width: 24px; height: 24px; 
+            background: rgba(0,0,0,0.1); border-radius: 50%; color: white; 
+            display: flex; align-items: center; justify-content: center; font-size: 14px; cursor: pointer; z-index: 5;
+            display: none;
+        }
+        .note-card:hover .note-del-btn { display: flex; }
+
+        /* Note Editor View */
+        #notes-editor-view { display: none; flex-direction: column; height: 100%; }
+        .editor-toolbar { display: flex; justify-content: space-between; margin-bottom: 15px; padding: 0 10px; }
         .editor-toolbar button { background: none; border: none; color: var(--primary-color); font-weight: 600; font-size: 16px; cursor: pointer; }
-        .note-textarea { width: 100%; flex: 1; border: none; background: #FFFDF0; padding: 20px; font-size: 16px; line-height: 1.6; border-radius: 15px; resize: none; box-sizing: border-box; min-height: 400px; outline: none; box-shadow: inset 0 0 10px rgba(0,0,0,0.05); }
+        .note-textarea { 
+            width: 100%; flex: 1; border: none; background: #FFFDF0; padding: 20px; 
+            font-size: 16px; line-height: 1.6; border-radius: 15px; resize: none; 
+            box-sizing: border-box; min-height: 400px; outline: none; 
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.05); 
+        }
 
-        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.5); z-index: 3000; display: none; align-items: center; justify-content: center; }
+        /* Modals */
+        .modal-overlay { 
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0; 
+            background: rgba(0, 0, 0, 0.5); 
+            z-index: 200000 !important; /* 比 Header 高 */
+            display: none; align-items: center; justify-content: center; 
+        }
         .modal-overlay.show { display: flex; }
         .modal-box { background: white; padding: 25px; border-radius: 20px; width: 85%; max-width: 400px; max-height: 85vh; display: flex; flex-direction: column; position: relative;}
         .modal-title { font-size: 18px; font-weight: 800; margin-bottom: 20px; text-align: center; color: var(--text-dark); }
-        .close-icon { position: absolute; top: 15px; right: 15px; font-size: 28px; color: #999; cursor: pointer; padding: 5px; z-index: 3001; }
+        .close-icon { position: absolute; top: 15px; right: 20px; font-size: 28px; color: #999; cursor: pointer; padding: 5px; }
         .modal-btn { width: 100%; padding: 12px; border: none; border-radius: 12px; font-weight: 600; cursor: pointer; margin-top: 15px; background: var(--primary-color); color: white;}
         .modal-btn.secondary { background: #E5E5EA; color: #333; }
         
@@ -122,7 +195,7 @@
     <div class="header">
         <div class="header-top-row">
             <div class="title-group">
-                <div class="trip-title" contenteditable="false" onblur="updateTitle(this.innerText)">🇯🇵 名古屋・白川鄉 (V28)</div>
+                <div class="trip-title" contenteditable="false" onblur="updateTitle(this.innerText)">🇯🇵 名古屋・白川鄉 (V31)</div>
                 <div class="trip-subtitle" onclick="openDatePicker()">DEC 05 - DEC 09, 2025</div>
             </div>
             <div class="controls">
@@ -144,7 +217,7 @@
                 💰 旅遊記帳小幫手
             </div>
             <div id="tabs-notes" class="sub-tabs" style="display:none; justify-content:center; color:white; font-size:14px; opacity:0.8;">
-                📝 隨身筆記牆
+                📝 隨身筆記牆 (點擊編輯)
             </div>
         </div>
     </div>
@@ -184,9 +257,9 @@
         <div id="notes-editor-view" style="display:none;">
             <div class="editor-toolbar">
                 <button onclick="closeNoteEditor()" style="font-size:16px;color:#888;">< 返回</button>
-                <button onclick="saveAndCloseNoteEditor()" style="font-size:16px;font-weight:bold;">儲存</button>
+                <button onclick="saveAndCloseNoteEditor()" style="font-size:16px;font-weight:bold;color:var(--primary-color);">儲存</button>
             </div>
-            <textarea id="current-note-input" class="note-textarea" placeholder="輸入內容..."></textarea>
+            <textarea id="current-note-input" class="note-textarea" placeholder="在此輸入內容..."></textarea>
         </div>
     </div>
 
@@ -268,7 +341,7 @@
                         if(!appData.expenses) appData.expenses = [];
                         if(!appData.meta) appData.meta = defaultData.meta;
                         if(!appData.activityTypes) appData.activityTypes = defaultData.activityTypes;
-                        document.querySelector('.trip-title').innerText = appData.meta.title + ' (V28)';
+                        document.querySelector('.trip-title').innerText = appData.meta.title + ' (V31)';
                         document.querySelector('.trip-subtitle').innerText = appData.meta.subtitle;
                         if(document.getElementById('current-rate')) document.getElementById('current-rate').innerText = appData.meta.rate || 0.22;
                         renderTabs(); renderSchedule(); renderChecklist(); renderExpenses(); renderNotesGrid();
@@ -325,7 +398,7 @@
             reader.readAsText(file); input.value = '';
         }
 
-        // --- Notes Logic ---
+        // --- Notes Logic (Page View Mode) ---
         function renderNotesGrid() {
             const container = document.getElementById('notes-grid-container'); container.innerHTML = '';
             if(!appData.notesList || appData.notesList.length === 0) { container.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:#999;padding:20px;">尚無筆記</div>'; return; }
@@ -333,19 +406,19 @@
                 const div = document.createElement('div'); div.className = 'note-card';
                 div.onclick = function(e) { if(e.target.closest('.note-del-btn')) return; openNoteEditor(note.id); };
                 
-                // ★★★ 強制寫入 inline style 確保按鈕顯示 ★★★
                 const delBtnStyle = isEditing ? 'display:flex !important;' : 'display:none;';
-                
                 div.innerHTML = `<div class="note-del-btn" style="${delBtnStyle}" onclick="deleteNote(${note.id})">×</div><div class="note-preview">${note.content || "(空白)"}</div><div class="note-date">${note.date || ""}</div>`;
                 container.appendChild(div);
             });
         }
         function createNewNote() { const id = Date.now(); appData.notesList.push({id: id, content: "", date: new Date().toLocaleDateString()}); triggerSave(); renderNotesGrid(); openNoteEditor(id); }
+        
         function openNoteEditor(id) { 
             currentEditingNoteId = id; 
             const n = appData.notesList.find(x => x.id === id); 
             if(n) { 
                 document.getElementById('current-note-input').value = n.content; 
+                // Switch Views within the Notes container
                 document.getElementById('notes-list-view').style.display = 'none';
                 document.getElementById('notes-editor-view').style.display = 'flex';
             } 
@@ -370,13 +443,20 @@
             document.getElementById('btn-view-' + view).classList.add('active');
             document.querySelectorAll('.content').forEach(c => c.classList.remove('active'));
             document.getElementById('container-' + view).classList.add('active');
+            
+            // Control Tabs Visibility
             document.getElementById('tabs-itinerary').style.display = view === 'itinerary' ? 'flex' : 'none';
             document.getElementById('tabs-checklist').style.display = view === 'checklist' ? 'flex' : 'none';
             document.getElementById('tabs-expenses').style.display = view === 'expenses' ? 'flex' : 'none';
             document.getElementById('tabs-notes').style.display = view === 'notes' ? 'flex' : 'none';
+            
+            // Reset Note View to list if switching
+            if(view !== 'notes') {
+                 document.getElementById('notes-editor-view').style.display = 'none';
+                 document.getElementById('notes-list-view').style.display = 'block';
+            }
         }
 
-        // --- Tabs & Date ---
         const WEEKDAYS = ["週日", "週一", "週二", "週三", "週四", "週五", "週六"];
         const MONTHS = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
         function renderTabs() {
@@ -421,7 +501,6 @@
                 let mapUrl=`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent((item.loc||"").replace(/📍|🚗|🚄|✈️/g,'').trim())}`;
                 let hasMemo=(item.memo||"").length>0;
                 
-                // ★★★ 關鍵修改：直接在 HTML 中寫入 style 來控制顯示，無視外部 CSS 衝突 ★★★
                 const delBtnStyle = isEditing ? 'display:flex !important;' : 'display:none;';
                 const handleStyle = isEditing ? 'display:block !important;' : 'display:none;';
                 const typeBadgeStyle = isEditing ? 'display:none !important;' : 'display:inline-block;';
@@ -473,7 +552,6 @@
         function renderTagsList() { const c=document.getElementById('tags-list-container'); c.innerHTML=''; appData.activityTypes.forEach(t=>{ const d=document.createElement('div'); d.style.cssText='display:flex;justify-content:space-between;padding:12px;border-bottom:1px solid #eee;'; d.innerHTML=`<span>${t}</span><span style="color:red;cursor:pointer;" onclick="deleteTag('${t}')">✕</span>`; c.appendChild(d); }); }
         function deleteTag(t) { if(confirm("刪除標籤？")){ appData.activityTypes=appData.activityTypes.filter(x=>x!==t); saveDataToCloud(true); renderTagsList(); } }
 
-        // --- Toggle Logic (Direct Style Manipulation) ---
         function toggleEditMode() {
             if(!isEditing && !sessionStorage.getItem('isAuth')) { const p=prompt("密碼："); if(p!=="8888"){alert("錯誤");return;} sessionStorage.setItem('isAuth','true'); }
             isEditing = !isEditing;
@@ -482,7 +560,6 @@
             document.querySelector('.trip-subtitle').style.cursor = isEditing ? "pointer" : "default";
             document.querySelector('.trip-subtitle').style.borderBottom = isEditing ? "1px dashed rgba(255,255,255,0.5)" : "none";
             
-            // ★★★ 關鍵修改：直接操作 style 屬性，不依賴 CSS class ★★★
             const disp = isEditing ? 'block' : 'none';
             document.querySelectorAll('.add-btn-container').forEach(e => e.style.setProperty('display', disp, 'important'));
             document.querySelectorAll('.del-check-btn, .del-cat-btn, .add-check-row, .add-cat-btn').forEach(e => e.style.setProperty('display', disp, 'important'));
