@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -9,120 +10,702 @@
     <style>
         /* --- UI 設定 --- */
         :root {
-            --primary-color: #5856D6; --bg-color: #F5F5FA; --card-bg: #FFFFFF;
-            --danger-color: #FF3B30; --success-color: #34C759; --text-dark: #1C1C1E; --text-gray: #8E8E93; --line-color: #E5E5EA;
+            --primary-color: #5856D6;
+            --bg-color: #F5F5FA;
+            --card-bg: #FFFFFF;
+            --danger-color: #FF3B30;
+            --success-color: #34C759;
+            --text-dark: #1C1C1E;
+            --text-gray: #8E8E93;
+            --line-color: #E5E5EA;
         }
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--bg-color); margin: 0; padding: 0;
-            padding-top: 180px; padding-bottom: 50px; -webkit-tap-highlight-color: transparent; color: var(--text-dark);
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 0;
+            padding-top: 180px;
+            padding-bottom: 50px;
+            -webkit-tap-highlight-color: transparent;
+            color: var(--text-dark);
         }
+
         /* Header */
         .header {
-            background: var(--primary-color); padding: 15px 20px 0px 20px;
-            border-bottom-left-radius: 24px; border-bottom-right-radius: 24px;
-            color: white; box-shadow: 0 4px 20px rgba(88, 86, 214, 0.4);
-            position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+            background: var(--primary-color);
+            padding: 15px 20px 0px 20px;
+            border-bottom-left-radius: 24px;
+            border-bottom-right-radius: 24px;
+            color: white;
+            box-shadow: 0 4px 20px rgba(88, 86, 214, 0.4);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
         }
-        .header-top-row { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; }
-        .trip-title { font-size: 24px; font-weight: 800; letter-spacing: 0.5px; line-height: 1.2; border-bottom: 1px dashed transparent; }
-        .trip-subtitle { font-size: 13px; opacity: 0.8; margin-top: 4px; font-weight: 500; border-bottom: 1px dashed transparent; display: inline-block; }
-        body.is-editing .trip-title, body.is-editing .trip-subtitle { border-bottom: 1px dashed rgba(255,255,255,0.5); background: rgba(0,0,0,0.1); border-radius: 4px; padding: 0 4px; }
-        
-        .controls { display: flex; gap: 8px; }
-        .view-btn { width: 36px; height: 36px; border-radius: 12px; border: none; background: rgba(255,255,255,0.2); color: rgba(255,255,255,0.7); display: flex; align-items: center; justify-content: center; font-size: 16px; cursor: pointer; transition: 0.2s; }
-        .view-btn.active { background: white; color: var(--primary-color); font-weight: bold; box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
-        .edit-toggle { height: 36px; padding: 0 12px; border-radius: 12px; border: none; background: rgba(0,0,0,0.2); color: white; font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 5px; cursor: pointer; }
-        .edit-toggle.editing { background: var(--success-color); }
 
-        .tabs-container { padding-bottom: 15px; overflow: hidden; }
-        .tabs { display: flex; overflow-x: auto; gap: 10px; scrollbar-width: none; padding: 4px; }
-        .tabs::-webkit-scrollbar { display: none; }
-        .tab-btn { background: rgba(255,255,255,0.15); border: none; color: rgba(255,255,255,0.8); padding: 8px 0; border-radius: 14px; width: 60px; flex-shrink: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; }
-        .tab-btn.active { background: white; color: var(--primary-color); font-weight: bold; transform: scale(1.05); box-shadow: 0 4px 10px rgba(0,0,0,0.2); color: var(--primary-color) !important; }
-        .tab-date { font-size: 10px; margin-bottom: 2px; }
-        .tab-day { font-size: 16px; font-weight: 800; }
-        .sub-tabs { display: none; justify-content: flex-start; gap: 10px; padding: 4px; }
-        .sub-tab-btn { background: rgba(0,0,0,0.2); color: rgba(255,255,255,0.8); border: none; padding: 8px 20px; border-radius: 20px; font-size: 14px; font-weight: 600; cursor: pointer; }
-        .sub-tab-btn.active { background: white; color: var(--primary-color); }
+        .header-top-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+
+        .trip-title {
+            font-size: 24px;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            line-height: 1.2;
+            border-bottom: 1px dashed transparent;
+        }
+
+        .trip-subtitle {
+            font-size: 13px;
+            opacity: 0.8;
+            margin-top: 4px;
+            font-weight: 500;
+            border-bottom: 1px dashed transparent;
+            display: inline-block;
+        }
+
+        body.is-editing .trip-title,
+        body.is-editing .trip-subtitle {
+            border-bottom: 1px dashed rgba(255, 255, 255, 0.5);
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: 4px;
+            padding: 0 4px;
+        }
+
+        .controls {
+            display: flex;
+            gap: 8px;
+        }
+
+        .view-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 12px;
+            border: none;
+            background: rgba(255, 255, 255, 0.2);
+            color: rgba(255, 255, 255, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .view-btn.active {
+            background: white;
+            color: var(--primary-color);
+            font-weight: bold;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .edit-toggle {
+            height: 36px;
+            padding: 0 12px;
+            border-radius: 12px;
+            border: none;
+            background: rgba(0, 0, 0, 0.2);
+            color: white;
+            font-size: 13px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+        }
+
+        .edit-toggle.editing {
+            background: var(--success-color);
+        }
+
+        .tabs-container {
+            padding-bottom: 15px;
+            overflow: hidden;
+        }
+
+        .tabs {
+            display: flex;
+            overflow-x: auto;
+            gap: 10px;
+            scrollbar-width: none;
+            padding: 4px;
+        }
+
+        .tabs::-webkit-scrollbar {
+            display: none;
+        }
+
+        .tab-btn {
+            background: rgba(255, 255, 255, 0.15);
+            border: none;
+            color: rgba(255, 255, 255, 0.8);
+            padding: 8px 0;
+            border-radius: 14px;
+            width: 60px;
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .tab-btn.active {
+            background: white;
+            color: var(--primary-color);
+            font-weight: bold;
+            transform: scale(1.05);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            color: var(--primary-color) !important;
+        }
+
+        .tab-date {
+            font-size: 10px;
+            margin-bottom: 2px;
+        }
+
+        .tab-day {
+            font-size: 16px;
+            font-weight: 800;
+        }
+
+        .sub-tabs {
+            display: none;
+            justify-content: flex-start;
+            gap: 10px;
+            padding: 4px;
+        }
+
+        .sub-tab-btn {
+            background: rgba(0, 0, 0, 0.2);
+            color: rgba(255, 255, 255, 0.8);
+            border: none;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .sub-tab-btn.active {
+            background: white;
+            color: var(--primary-color);
+        }
 
         /* Content */
-        .content { padding: 10px 20px; min-height: 300px; display: none; }
-        .content.active { display: block; animation: fadeIn 0.3s; }
-        .timeline-item { position: relative; padding-left: 20px; margin-bottom: 20px; }
-        .timeline-item::before { content: ''; position: absolute; left: 9px; top: 25px; bottom: -45px; width: 2px; background: var(--line-color); }
-        .timeline-item:last-child::before { display: none; }
-        .timeline-item::after { content: ''; position: absolute; left: 2px; top: 25px; width: 12px; height: 12px; background: var(--primary-color); border-radius: 50%; border: 2px solid white; box-shadow: 0 0 0 2px var(--primary-color); z-index: 2; }
-        .card { background: var(--card-bg); border-radius: 20px; padding: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.02); display: flex; gap: 15px; position: relative; }
-        
-        .time-col { display: flex; flex-direction: column; align-items: center; min-width: 65px; border-right: 1px dashed #EEE; padding-right: 15px; padding-top: 5px; }
-        .ampm { font-size: 11px; color: var(--text-gray); font-weight: 500; }
-        .time { font-size: 18px; font-weight: 800; color: var(--text-dark); letter-spacing: -0.5px; }
-        .type-badge { margin-top: 6px; padding: 3px 8px; border-radius: 8px; font-size: 10px; font-weight: 600; color: #666; background: #F2F2F7; }
-        .type-select { margin-top: 6px; width: 100%; font-size: 11px; display: none; }
-        body.is-editing .type-badge { display: none; }
-        body.is-editing .type-select { display: block; }
+        .content {
+            padding: 10px 20px;
+            min-height: 300px;
+            display: none;
+        }
 
-        .info-col { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
-        .info-title { font-size: 16px; font-weight: 700; color: var(--text-dark); line-height: 1.3; }
-        .info-loc { font-size: 12px; color: var(--text-gray); display: flex; align-items: center; gap: 5px; flex-wrap: wrap; }
-        .nav-btn { background: rgba(88, 86, 214, 0.1); color: var(--primary-color); padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: 700; text-decoration: none; display: inline-flex; align-items: center; gap: 2px; cursor: pointer; }
-        .info-note { font-size: 13px; color: #FF9500; font-weight: 500; margin-top: 2px; }
-        .memo-box { margin-top: 8px; background: #FFF9E6; border-left: 3px solid #FFCC00; padding: 8px; border-radius: 6px; font-size: 12px; color: #665C3B; display: none; }
-        .memo-box.show { display: block; }
+        .content.active {
+            display: block;
+            animation: fadeIn 0.3s;
+        }
 
-        .drag-handle { position: absolute; left: -25px; top: 50%; transform: translateY(-50%); color: #CCC; font-size: 16px; display: none; cursor: grab; padding: 10px;}
-        body.is-editing .drag-handle { display: block; }
-        .delete-btn { position: absolute; right: -8px; top: -8px; width: 22px; height: 22px; background: var(--danger-color); color: white; border-radius: 50%; display: none; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(0,0,0,0.2); cursor: pointer; z-index: 10; font-size: 12px;}
-        body.is-editing .delete-btn { display: flex; }
+        .timeline-item {
+            position: relative;
+            padding-left: 20px;
+            margin-bottom: 20px;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: 9px;
+            top: 25px;
+            bottom: -45px;
+            width: 2px;
+            background: var(--line-color);
+        }
+
+        .timeline-item:last-child::before {
+            display: none;
+        }
+
+        .timeline-item::after {
+            content: '';
+            position: absolute;
+            left: 2px;
+            top: 25px;
+            width: 12px;
+            height: 12px;
+            background: var(--primary-color);
+            border-radius: 50%;
+            border: 2px solid white;
+            box-shadow: 0 0 0 2px var(--primary-color);
+            z-index: 2;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 15px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+            border: 1px solid rgba(0, 0, 0, 0.02);
+            display: flex;
+            gap: 15px;
+            position: relative;
+        }
+
+        .time-col {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-width: 65px;
+            border-right: 1px dashed #EEE;
+            padding-right: 15px;
+            padding-top: 5px;
+        }
+
+        .ampm {
+            font-size: 11px;
+            color: var(--text-gray);
+            font-weight: 500;
+        }
+
+        .time {
+            font-size: 18px;
+            font-weight: 800;
+            color: var(--text-dark);
+            letter-spacing: -0.5px;
+        }
+
+        .type-badge {
+            margin-top: 6px;
+            padding: 3px 8px;
+            border-radius: 8px;
+            font-size: 10px;
+            font-weight: 600;
+            color: #666;
+            background: #F2F2F7;
+        }
+
+        .type-select {
+            margin-top: 6px;
+            width: 100%;
+            font-size: 11px;
+            display: none;
+        }
+
+        body.is-editing .type-badge {
+            display: none;
+        }
+
+        body.is-editing .type-select {
+            display: block;
+        }
+
+        .info-col {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .info-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-dark);
+            line-height: 1.3;
+        }
+
+        .info-loc {
+            font-size: 12px;
+            color: var(--text-gray);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            flex-wrap: wrap;
+        }
+
+        .nav-btn {
+            background: rgba(88, 86, 214, 0.1);
+            color: var(--primary-color);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 700;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 2px;
+            cursor: pointer;
+        }
+
+        .info-note {
+            font-size: 13px;
+            color: #FF9500;
+            font-weight: 500;
+            margin-top: 2px;
+        }
+
+        .memo-box {
+            margin-top: 8px;
+            background: #FFF9E6;
+            border-left: 3px solid #FFCC00;
+            padding: 8px;
+            border-radius: 6px;
+            font-size: 12px;
+            color: #665C3B;
+            display: none;
+        }
+
+        .memo-box.show {
+            display: block;
+        }
+
+        .drag-handle {
+            position: absolute;
+            left: -25px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #CCC;
+            font-size: 16px;
+            display: none;
+            cursor: grab;
+            padding: 10px;
+        }
+
+        body.is-editing .drag-handle {
+            display: block;
+        }
+
+        .delete-btn {
+            position: absolute;
+            right: -8px;
+            top: -8px;
+            width: 22px;
+            height: 22px;
+            background: var(--danger-color);
+            color: white;
+            border-radius: 50%;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            z-index: 10;
+            font-size: 12px;
+        }
+
+        body.is-editing .delete-btn {
+            display: flex;
+        }
 
         /* Checklist */
-        .checklist-container { padding: 10px 20px; }
-        .checklist-category { background: white; border-radius: 16px; padding: 15px; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.03); }
-        .cat-title { font-weight: 700; color: var(--primary-color); border-bottom: 1px solid #EEE; padding-bottom: 8px; margin-bottom: 8px; display:flex; justify-content:space-between;}
-        .check-item { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid #FAFAFA; }
-        .custom-checkbox { width: 20px; height: 20px; border: 2px solid #DDD; border-radius: 6px; display: flex; align-items: center; justify-content: center; }
-        .check-item.checked .custom-checkbox { background: var(--success-color); border-color: var(--success-color); }
-        .check-item.checked .custom-checkbox i { color: white; font-size: 10px; display: block; }
-        .custom-checkbox i { display: none; }
-        .check-item.checked .item-text { text-decoration: line-through; color: #CCC; }
+        .checklist-container {
+            padding: 10px 20px;
+        }
+
+        .checklist-category {
+            background: white;
+            border-radius: 16px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+        }
+
+        .cat-title {
+            font-weight: 700;
+            color: var(--primary-color);
+            border-bottom: 1px solid #EEE;
+            padding-bottom: 8px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .check-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 0;
+            border-bottom: 1px solid #FAFAFA;
+        }
+
+        .custom-checkbox {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #DDD;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .check-item.checked .custom-checkbox {
+            background: var(--success-color);
+            border-color: var(--success-color);
+        }
+
+        .check-item.checked .custom-checkbox i {
+            color: white;
+            font-size: 10px;
+            display: block;
+        }
+
+        .custom-checkbox i {
+            display: none;
+        }
+
+        .check-item.checked .item-text {
+            text-decoration: line-through;
+            color: #CCC;
+        }
 
         /* Edit Mode Styles */
-        body.is-editing .info-title, body.is-editing .info-loc span, body.is-editing .info-note, body.is-editing .time { border-bottom: 1px dashed #CCC; background: rgba(0,0,0,0.02); min-width: 20px; }
-        .del-check-btn, .del-cat-btn, .add-check-row, .add-cat-btn, .add-btn-container { display: none; }
-        body.is-editing .del-check-btn, body.is-editing .del-cat-btn, body.is-editing .add-check-row, body.is-editing .add-cat-btn, body.is-editing .add-btn-container { display: block; }
-        .add-btn { background: var(--primary-color); color: white; border: none; padding: 10px 20px; border-radius: 30px; font-size: 13px; font-weight: 600; box-shadow: 0 4px 10px rgba(88,86,214,0.3); margin-top: 10px; }
-        .add-cat-btn { width: 100%; text-align: center; padding: 15px; background: white; border: 2px dashed #DDD; border-radius: 12px; color: #AAA; margin-top: 10px; cursor: pointer;}
-        .del-check-btn { color: var(--danger-color); margin-left: auto; cursor: pointer; }
-        .add-check-btn { color: var(--link-color); font-size: 13px; padding-top: 5px; cursor: pointer; text-align: center;}
+        body.is-editing .info-title,
+        body.is-editing .info-loc span,
+        body.is-editing .info-note,
+        body.is-editing .time {
+            border-bottom: 1px dashed #CCC;
+            background: rgba(0, 0, 0, 0.02);
+            min-width: 20px;
+        }
 
-        #status-indicator { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.8); color: white; padding: 8px 16px; border-radius: 30px; font-size: 12px; z-index: 2000; display: none; }
-        #status-indicator.show { display: block; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .del-check-btn,
+        .del-cat-btn,
+        .add-check-row,
+        .add-cat-btn,
+        .add-btn-container {
+            display: none;
+        }
+
+        body.is-editing .del-check-btn,
+        body.is-editing .del-cat-btn,
+        body.is-editing .add-check-row,
+        body.is-editing .add-cat-btn,
+        body.is-editing .add-btn-container {
+            display: block;
+        }
+
+        .add-btn {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 600;
+            box-shadow: 0 4px 10px rgba(88, 86, 214, 0.3);
+            margin-top: 10px;
+        }
+
+        .add-cat-btn {
+            width: 100%;
+            text-align: center;
+            padding: 15px;
+            background: white;
+            border: 2px dashed #DDD;
+            border-radius: 12px;
+            color: #AAA;
+            margin-top: 10px;
+            cursor: pointer;
+        }
+
+        .del-check-btn {
+            color: var(--danger-color);
+            margin-left: auto;
+            cursor: pointer;
+        }
+
+        .add-check-btn {
+            color: var(--link-color);
+            font-size: 13px;
+            padding-top: 5px;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        #status-indicator {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 30px;
+            font-size: 12px;
+            z-index: 2000;
+            display: none;
+        }
+
+        #status-indicator.show {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        #status-indicator.show {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* Date Picker Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 3000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-overlay.show {
+            display: flex;
+        }
+
+        .modal-box {
+            background: white;
+            padding: 25px;
+            border-radius: 20px;
+            width: 80%;
+            max-width: 320px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: 800;
+            margin-bottom: 20px;
+            text-align: center;
+            color: var(--text-dark);
+        }
+
+        .date-input-group {
+            margin-bottom: 15px;
+        }
+
+        .date-input-group label {
+            display: block;
+            font-size: 12px;
+            color: var(--text-gray);
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+
+        .date-input-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #DDD;
+            border-radius: 10px;
+            font-size: 16px;
+            box-sizing: border-box;
+            font-family: inherit;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 25px;
+        }
+
+        .modal-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .modal-btn.cancel {
+            background: #F2F2F7;
+            color: var(--text-dark);
+        }
+
+        .modal-btn.confirm {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        /* Tag Manager Styles */
+        .tag-list {
+            max-height: 300px;
+            overflow-y: auto;
+            margin: 15px 0;
+            border: 1px solid #EEE;
+            border-radius: 12px;
+        }
+
+        .tag-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 15px;
+            border-bottom: 1px solid #FAFAFA;
+        }
+
+        .tag-item:last-child {
+            border-bottom: none;
+        }
+
+        .tag-name {
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .tag-del-btn {
+            color: var(--danger-color);
+            cursor: pointer;
+            padding: 5px;
+            font-size: 14px;
+        }
     </style>
 </head>
+
 <body>
 
     <div class="header">
         <div class="header-top-row">
             <div class="title-group">
                 <div class="trip-title" contenteditable="false" onblur="updateTitle(this.innerText)">🇯🇵 名古屋・白川鄉</div>
-                <div class="trip-subtitle" contenteditable="false" onblur="updateSubtitle(this.innerText)">DEC 05 - DEC 09, 2025</div>
+                <div class="trip-subtitle" onclick="openDatePicker()">DEC 05 - DEC 09, 2025</div>
             </div>
             <div class="controls">
-                <button id="btn-view-itinerary" class="view-btn active" onclick="switchView('itinerary')"><i class="far fa-calendar-alt"></i></button>
-                <button id="btn-view-checklist" class="view-btn" onclick="switchView('checklist')"><i class="fas fa-tasks"></i></button>
+                <button id="btn-view-itinerary" class="view-btn active" onclick="switchView('itinerary')"><i
+                        class="far fa-calendar-alt"></i></button>
+                <button id="btn-view-checklist" class="view-btn" onclick="switchView('checklist')"><i
+                        class="fas fa-tasks"></i></button>
                 <button class="edit-toggle" onclick="toggleEditMode()"><i class="fas fa-pen"></i></button>
             </div>
         </div>
         <div class="tabs-container">
             <div id="tabs-itinerary" class="tabs">
-                <button class="tab-btn active" onclick="switchDay('d1', this)"><span class="tab-date">週四</span><span class="tab-day">D1</span></button>
-                <button class="tab-btn" onclick="switchDay('d2', this)"><span class="tab-date">週五</span><span class="tab-day">D2</span></button>
-                <button class="tab-btn" onclick="switchDay('d3', this)"><span class="tab-date">週六</span><span class="tab-day">D3</span></button>
-                <button class="tab-btn" onclick="switchDay('d4', this)"><span class="tab-date">週日</span><span class="tab-day">D4</span></button>
-                <button class="tab-btn" onclick="switchDay('d5', this)"><span class="tab-date">週一</span><span class="tab-day">D5</span></button>
-                <button class="tab-btn" onclick="switchDay('d6', this)"><span class="tab-date">週二</span><span class="tab-day">D6</span></button>
+                <!-- Dynamic Tabs will be rendered here -->
             </div>
             <div id="tabs-checklist" class="sub-tabs">
                 <button class="sub-tab-btn active" onclick="switchChecklistType('pre', this)">🏠 行前準備</button>
@@ -139,6 +722,38 @@
     <div id="container-checklist" class="content">
         <div id="checklist-container"></div>
         <div class="add-cat-btn" onclick="addNewCategory()">＋ 新增一個大分類</div>
+    </div>
+
+    <!-- Date Picker Modal -->
+    <div id="date-modal" class="modal-overlay">
+        <div class="modal-box">
+            <div class="modal-title">設定旅遊日期</div>
+            <div class="date-input-group">
+                <label>開始日期</label>
+                <input type="date" id="input-start-date">
+            </div>
+            <div class="date-input-group">
+                <label>結束日期</label>
+                <input type="date" id="input-end-date">
+            </div>
+            <div class="modal-actions">
+                <button class="modal-btn cancel" onclick="closeDatePicker()">取消</button>
+                <button class="modal-btn confirm" onclick="saveDateRange()">確定</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tag Manager Modal -->
+    <div id="tags-modal" class="modal-overlay">
+        <div class="modal-box">
+            <div class="modal-title">管理標籤選項</div>
+            <div id="tags-list-container" class="tag-list">
+                <!-- Tags will be rendered here -->
+            </div>
+            <div class="modal-actions">
+                <button class="modal-btn confirm" onclick="closeTagsManager()">關閉</button>
+            </div>
+        </div>
     </div>
 
     <div id="status-indicator"><i class="fas fa-sync fa-spin"></i> 同步中...</div>
@@ -158,11 +773,17 @@
         if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
         // ★ 更新檔案名稱，確保載入新資料 ★
-        const tripDocRef = db.collection("trips").doc("nagoya_2025_trip_v15_final"); 
+        const tripDocRef = db.collection("trips").doc("nagoya_2025_trip_v15_final");
 
         // --- 完整行程資料 ---
+        // --- 完整行程資料 ---
         const defaultData = {
-            meta: { title: "🇯🇵 名古屋・白川鄉", subtitle: "DEC 05 - DEC 09, 2025" },
+            meta: {
+                title: "🇯🇵 名古屋・白川鄉",
+                subtitle: "DEC 05 - DEC 09, 2025",
+                startDate: "2025-12-05",
+                endDate: "2025-12-09"
+            },
             itinerary: {
                 d1: [
                     { id: 101, time: "11:00", type: "✈️ 飛行", title: "抵達桃園機場", loc: "桃園機場第一航廈", note: "準備 Check-in", memo: "" },
@@ -223,7 +844,7 @@
         let appData = JSON.parse(JSON.stringify(defaultData));
         let sortableInstance = null;
 
-        window.onload = function() { initRealtimeSync(); };
+        window.onload = function () { initRealtimeSync(); };
 
         function initRealtimeSync() {
             showStatus("連線中...");
@@ -232,11 +853,21 @@
                     const remoteData = doc.data();
                     if (!isEditing || !appData.itinerary) {
                         appData = remoteData;
-                        if(!appData.meta) appData.meta = defaultData.meta;
-                        if(!appData.activityTypes) appData.activityTypes = defaultData.activityTypes;
+                        if (!appData.meta) appData.meta = defaultData.meta;
+
+                        // Migration: If no startDate/endDate, try to parse or use default
+                        if (!appData.meta.startDate) {
+                            // Simple fallback or parse logic could go here, for now use default if missing
+                            appData.meta.startDate = defaultData.meta.startDate;
+                            appData.meta.endDate = defaultData.meta.endDate;
+                        }
+
+                        if (!appData.activityTypes) appData.activityTypes = defaultData.activityTypes;
                         document.querySelector('.trip-title').innerText = appData.meta.title;
-                        document.querySelector('.trip-subtitle').innerText = appData.meta.subtitle;
-                        renderSchedule(); renderChecklist();
+
+                        renderTabs(); // Render tabs first to ensure DOM exists
+                        renderSchedule();
+                        renderChecklist();
                     }
                     showStatus("已同步", false);
                     setTimeout(() => hideStatus(), 2000);
@@ -269,10 +900,81 @@
         }
 
         function updateTitle(val) { appData.meta.title = val.trim(); saveDataToCloud(true); }
-        function updateSubtitle(val) { appData.meta.subtitle = val.trim(); saveDataToCloud(true); }
+        // function updateSubtitle(val) { appData.meta.subtitle = val.trim(); saveDataToCloud(true); } // Deprecated in favor of date picker
+
+        // --- Date Logic ---
+        const WEEKDAYS = ["週日", "週一", "週二", "週三", "週四", "週五", "週六"];
+        const MONTHS = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+
+        function renderTabs() {
+            const container = document.getElementById('tabs-itinerary');
+            container.innerHTML = '';
+
+            const start = new Date(appData.meta.startDate);
+            const end = new Date(appData.meta.endDate);
+            const diffTime = Math.abs(end - start);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+
+            // Update Subtitle Display
+            const startStr = `${MONTHS[start.getMonth()]} ${String(start.getDate()).padStart(2, '0')}`;
+            const endStr = `${MONTHS[end.getMonth()]} ${String(end.getDate()).padStart(2, '0')}, ${end.getFullYear()}`;
+            appData.meta.subtitle = `${startStr} - ${endStr}`;
+            document.querySelector('.trip-subtitle').innerText = appData.meta.subtitle;
+
+            for (let i = 0; i < diffDays; i++) {
+                const dayId = `d${i + 1}`;
+                const currDate = new Date(start);
+                currDate.setDate(start.getDate() + i);
+                const dayName = WEEKDAYS[currDate.getDay()];
+
+                const btn = document.createElement('button');
+                btn.className = `tab-btn ${currentDay === dayId ? 'active' : ''}`;
+                btn.onclick = function () { switchDay(dayId, this); };
+                btn.innerHTML = `<span class="tab-date">${dayName}</span><span class="tab-day">D${i + 1}</span>`;
+                container.appendChild(btn);
+            }
+        }
+
+        function openDatePicker() {
+            if (!isEditing) return;
+            document.getElementById('input-start-date').value = appData.meta.startDate;
+            document.getElementById('input-end-date').value = appData.meta.endDate;
+            document.getElementById('date-modal').classList.add('show');
+        }
+
+        function closeDatePicker() {
+            document.getElementById('date-modal').classList.remove('show');
+        }
+
+        function saveDateRange() {
+            const s = document.getElementById('input-start-date').value;
+            const e = document.getElementById('input-end-date').value;
+            if (!s || !e) { alert("請選擇日期"); return; }
+            if (new Date(s) > new Date(e)) { alert("結束日期不能早於開始日期"); return; }
+
+            // Check if we are shrinking the range and have data
+            const oldEnd = new Date(appData.meta.endDate);
+            const newEnd = new Date(e);
+
+            // Logic to clean up old days if needed could go here, 
+            // but for safety we just keep the data in appData.itinerary even if not shown in tabs immediately,
+            // or we can strictly clean it up. Let's keep it simple: just update range.
+
+            appData.meta.startDate = s;
+            appData.meta.endDate = e;
+
+            // Reset current day if it's out of range? 
+            // For now, just reset to d1 to be safe if current day is far out.
+            currentDay = 'd1';
+
+            renderTabs();
+            renderSchedule();
+            saveDataToCloud(true);
+            closeDatePicker();
+        }
 
         function getPeriod(timeStr) {
-            if(!timeStr || !timeStr.includes(":")) return "";
+            if (!timeStr || !timeStr.includes(":")) return "";
             const h = parseInt(timeStr.split(":")[0]);
             if (h < 5) return "深夜"; if (h < 11) return "上午"; if (h < 14) return "中午"; if (h < 18) return "下午"; return "晚上";
         }
@@ -284,7 +986,7 @@
                 opts += `<option value="${t}" ${sel}>${t}</option>`;
             });
             opts += `<option value="ADD_NEW">➕ 新增選項...</option>`;
-            opts += `<option value="DEL_OPTION" style="color:red;">➖ 刪除選項...</option>`;
+            opts += `<option value="MANAGE_OPTION" style="color:var(--primary-color);">⚙️ 管理選項...</option>`;
             return opts;
         }
 
@@ -300,11 +1002,11 @@
                 let hasMemo = (item.memo || "").length > 0;
                 let memoClass = hasMemo ? "show" : "";
                 let typeVal = item.type || "";
-                
+
                 const div = document.createElement('div');
                 div.className = 'timeline-item';
                 div.setAttribute('data-index', index);
-                
+
                 div.innerHTML = `
                     <div class="drag-handle"><i class="fas fa-bars"></i></div>
                     <div class="card">
@@ -324,12 +1026,12 @@
                             <div class="info-note" onblur="updateItinerary(${index}, 'note', this.innerText)">${item.note}</div>
                             <div class="memo-box ${memoClass}" onblur="updateItinerary(${index}, 'memo', this.innerText)">${item.memo || ""}</div>
                             <div class="memo-controls" style="display:none; margin-top:5px; font-size:12px;">
-                                <span onclick="toggleMemo(${index})" style="color:#007AFF; cursor:pointer;">${hasMemo?'刪除備忘':'新增備忘'}</span>
+                                <span onclick="toggleMemo(${index})" style="color:#007AFF; cursor:pointer;">${hasMemo ? '刪除備忘' : '新增備忘'}</span>
                             </div>
                         </div>
                     </div>
                 `;
-                if(isEditing) div.querySelector('.memo-controls').style.display = 'block';
+                if (isEditing) div.querySelector('.memo-controls').style.display = 'block';
                 container.appendChild(div);
             });
             setEditable(isEditing);
@@ -347,11 +1049,11 @@
             }
         }
 
-        function updateLoc(i, v) { v = v.trim(); if(appData.itinerary[currentDay][i]) { appData.itinerary[currentDay][i].loc = v; renderSchedule(); } }
-        function updateTimeText(i, val) { val = val.trim(); if(appData.itinerary[currentDay][i]) { appData.itinerary[currentDay][i].time = val; renderSchedule(); } }
-        function updateItinerary(i, k, v) { if(appData.itinerary[currentDay][i]) appData.itinerary[currentDay][i][k] = v.trim(); }
+        function updateLoc(i, v) { v = v.trim(); if (appData.itinerary[currentDay][i]) { appData.itinerary[currentDay][i].loc = v; renderSchedule(); } }
+        function updateTimeText(i, val) { val = val.trim(); if (appData.itinerary[currentDay][i]) { appData.itinerary[currentDay][i].time = val; renderSchedule(); } }
+        function updateItinerary(i, k, v) { if (appData.itinerary[currentDay][i]) appData.itinerary[currentDay][i][k] = v.trim(); }
         function toggleMemo(i) { const item = appData.itinerary[currentDay][i]; item.memo = item.memo ? "" : "備忘..."; renderSchedule(); }
-        
+
         function updateType(index, val) {
             if (val === "ADD_NEW") {
                 const newType = prompt("請輸入新標籤 (例如: 🍜 拉麵)：");
@@ -360,15 +1062,44 @@
                     appData.itinerary[currentDay][index].type = newType.trim();
                     saveDataToCloud(true); renderSchedule();
                 } else { renderSchedule(); }
-            } else if (val === "DEL_OPTION") {
-                const target = prompt("輸入要刪除的標籤名稱：");
-                if (target && appData.activityTypes.includes(target)) {
-                    if(confirm(`刪除「${target}」？`)) {
-                        appData.activityTypes = appData.activityTypes.filter(t => t !== target);
-                        saveDataToCloud(true); renderSchedule();
-                    }
-                } else { renderSchedule(); }
+            } else if (val === "MANAGE_OPTION") {
+                openTagsManager();
+                // Reset selection to original value or empty to avoid showing "Manage Option" as selected
+                renderSchedule();
             } else { appData.itinerary[currentDay][index].type = val; }
+        }
+
+        // --- Tag Manager Logic ---
+        function openTagsManager() {
+            renderTagsList();
+            document.getElementById('tags-modal').classList.add('show');
+        }
+
+        function closeTagsManager() {
+            document.getElementById('tags-modal').classList.remove('show');
+            renderSchedule(); // Re-render to update dropdowns if tags changed
+        }
+
+        function renderTagsList() {
+            const container = document.getElementById('tags-list-container');
+            container.innerHTML = '';
+            appData.activityTypes.forEach(tag => {
+                const div = document.createElement('div');
+                div.className = 'tag-item';
+                div.innerHTML = `
+                    <span class="tag-name">${tag}</span>
+                    <div class="tag-del-btn" onclick="deleteTag('${tag}')"><i class="fas fa-trash-alt"></i></div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function deleteTag(tag) {
+            if (confirm(`確定要刪除「${tag}」嗎？`)) {
+                appData.activityTypes = appData.activityTypes.filter(t => t !== tag);
+                saveDataToCloud(true);
+                renderTagsList();
+            }
         }
 
         function renderChecklist() {
@@ -378,7 +1109,7 @@
             (targetList || []).forEach((cat, ci) => {
                 let itemsHtml = '';
                 cat.items.forEach((item, ii) => {
-                    itemsHtml += `<div class="check-item ${item.checked?'checked':''}"><div class="custom-checkbox" onclick="toggleCheck(${ci},${ii})"><i>✔</i></div><div class="item-text" onblur="updCheck(${ci},${ii},this.innerText)">${item.text}</div><div class="del-check-btn" onclick="delCheck(${ci},${ii})">✕</div></div>`;
+                    itemsHtml += `<div class="check-item ${item.checked ? 'checked' : ''}"><div class="custom-checkbox" onclick="toggleCheck(${ci},${ii})"><i>✔</i></div><div class="item-text" onblur="updCheck(${ci},${ii},this.innerText)">${item.text}</div><div class="del-check-btn" onclick="delCheck(${ci},${ii})">✕</div></div>`;
                 });
                 const div = document.createElement('div');
                 div.className = 'checklist-category';
@@ -387,18 +1118,18 @@
             });
             setEditable(isEditing);
         }
-        function toggleCheck(ci, ii) { if(isEditing) return; const l=getList(); l[ci].items[ii].checked=!l[ci].items[ii].checked; renderChecklist(); saveDataToCloud(true); }
+        function toggleCheck(ci, ii) { if (isEditing) return; const l = getList(); l[ci].items[ii].checked = !l[ci].items[ii].checked; renderChecklist(); saveDataToCloud(true); }
         function updCheck(ci, ii, v) { getList()[ci].items[ii].text = v.trim(); }
         function updCat(ci, v) { getList()[ci].category = v.trim(); }
-        function delCheck(ci, ii) { if(confirm('刪除？')){ getList()[ci].items.splice(ii,1); renderChecklist(); }}
-        function addCheck(ci) { getList()[ci].items.push({text:"新項目", checked:false}); renderChecklist(); }
-        function delCat(ci) { if(confirm('刪除分類？')){ getList().splice(ci,1); renderChecklist(); }}
-        function addNewCategory() { getList().push({category:"新分類", items:[]}); renderChecklist(); }
+        function delCheck(ci, ii) { if (confirm('刪除？')) { getList()[ci].items.splice(ii, 1); renderChecklist(); } }
+        function addCheck(ci) { getList()[ci].items.push({ text: "新項目", checked: false }); renderChecklist(); }
+        function delCat(ci) { if (confirm('刪除分類？')) { getList().splice(ci, 1); renderChecklist(); } }
+        function addNewCategory() { getList().push({ category: "新分類", items: [] }); renderChecklist(); }
         function getList() { return currentChecklistType === 'pre' ? appData.checklist_pre : appData.checklist_tour; }
 
         function toggleEditMode() {
             if (!isEditing) {
-                const pwd = "8888"; 
+                const pwd = "8888";
                 if (!sessionStorage.getItem('isAuth')) {
                     const input = prompt("請輸入編輯密碼：");
                     if (input !== pwd) { alert("密碼錯誤"); return; }
@@ -409,22 +1140,26 @@
             const btn = document.querySelector('.edit-toggle');
             document.body.classList.toggle('is-editing', isEditing);
             btn.classList.toggle('editing', isEditing);
-            
+
             document.querySelector('.trip-title').contentEditable = isEditing;
-            document.querySelector('.trip-subtitle').contentEditable = isEditing;
+            document.querySelector('.trip-title').contentEditable = isEditing;
+            // document.querySelector('.trip-subtitle').contentEditable = isEditing; // No longer directly editable
+            document.querySelector('.trip-subtitle').style.cursor = isEditing ? "pointer" : "default";
+            document.querySelector('.trip-subtitle').style.borderBottom = isEditing ? "1px dashed rgba(255,255,255,0.5)" : "none";
 
             setEditable(isEditing);
             renderSchedule(); renderChecklist();
         }
-        
-        function switchDay(d, b) { currentDay=d; document.querySelectorAll('#tabs-itinerary .tab-btn').forEach(e=>e.classList.remove('active')); b.classList.add('active'); renderSchedule(); }
-        function switchChecklistType(t, b) { currentChecklistType=t; document.querySelectorAll('.sub-tab-btn').forEach(e=>e.classList.remove('active')); b.classList.add('active'); renderChecklist(); }
+
+        function switchDay(d, b) { currentDay = d; document.querySelectorAll('#tabs-itinerary .tab-btn').forEach(e => e.classList.remove('active')); b.classList.add('active'); renderSchedule(); }
+        function switchChecklistType(t, b) { currentChecklistType = t; document.querySelectorAll('.sub-tab-btn').forEach(e => e.classList.remove('active')); b.classList.add('active'); renderChecklist(); }
         function setEditable(e) { document.querySelectorAll('.info-title, .info-loc span, .info-note, .memo-box, .item-text, .cat-title span, .time').forEach(f => { f.contentEditable = e; }); }
-        function addNewItem() { if(!appData.itinerary[currentDay]) appData.itinerary[currentDay]=[]; appData.itinerary[currentDay].push({id:Date.now(), time:"12:00", type:"✈️ 飛行", title:"新行程", loc:"地點", note:"", memo:""}); renderSchedule(); }
-        function deleteItem(i) { if(confirm('刪除？')){ appData.itinerary[currentDay].splice(i,1); renderSchedule(); }}
-        function showStatus(m, e){ const el=document.getElementById('status-indicator'); el.innerText=m; el.classList.add('show'); if(e) el.style.background='red'; else el.style.background='rgba(0,0,0,0.8)'; }
-        function hideStatus(){ document.getElementById('status-indicator').classList.remove('show'); }
+        function addNewItem() { if (!appData.itinerary[currentDay]) appData.itinerary[currentDay] = []; appData.itinerary[currentDay].push({ id: Date.now(), time: "12:00", type: "✈️ 飛行", title: "新行程", loc: "地點", note: "", memo: "" }); renderSchedule(); }
+        function deleteItem(i) { if (confirm('刪除？')) { appData.itinerary[currentDay].splice(i, 1); renderSchedule(); } }
+        function showStatus(m, e) { const el = document.getElementById('status-indicator'); el.innerText = m; el.classList.add('show'); if (e) el.style.background = 'red'; else el.style.background = 'rgba(0,0,0,0.8)'; }
+        function hideStatus() { document.getElementById('status-indicator').classList.remove('show'); }
         document.addEventListener('paste', function (e) { if (e.target.isContentEditable) { e.preventDefault(); const t = (e.clipboardData || window.clipboardData).getData('text'); document.execCommand('insertText', false, t); } });
     </script>
 </body>
+
 </html>
