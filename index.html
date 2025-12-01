@@ -5,48 +5,84 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>名古屋・白川鄉冬旅</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
+    
     <style>
-        /* --- 樣式設定 (與之前相同) --- */
+        /* --- 樣式設定 --- */
         :root { --primary-color: #5856D6; --bg-color: #F2F2F7; --card-bg: #FFFFFF; --danger-color: #FF3B30; --success-color: #34C759; --link-color: #007AFF; --text-gray: #8E8E93; }
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: var(--bg-color); margin: 0; padding: 0; padding-bottom: 90px; -webkit-tap-highlight-color: transparent; -webkit-text-size-adjust: 100%; }
+        
         .header { background: var(--primary-color); color: white; padding: 20px 20px 10px 20px; border-bottom-left-radius: 20px; border-bottom-right-radius: 20px; position: sticky; top: 0; z-index: 100; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
         .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
         .trip-title { font-size: 22px; font-weight: 800; }
         .edit-toggle { background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.4); color: white; padding: 5px 12px; border-radius: 20px; font-size: 12px; cursor: pointer; display: flex; align-items: center; gap: 5px; }
         .edit-toggle.editing { background: var(--success-color); border-color: transparent; }
+        
         .page-view { display: none; animation: fadeIn 0.3s; }
         .page-view.active { display: block; }
+        
+        /* Tabs */
         .tabs { display: flex; overflow-x: auto; gap: 10px; padding-bottom: 10px; scrollbar-width: none; }
         .tabs::-webkit-scrollbar { display: none; }
         .tab-btn { background: rgba(255,255,255,0.2); border: none; color: white; padding: 8px 16px; border-radius: 12px; min-width: 55px; display: flex; flex-direction: column; align-items: center; cursor: pointer; transition: 0.2s; flex-shrink: 0; }
         .tab-btn.active { background: white; color: var(--primary-color); font-weight: bold; }
         .tab-date { font-size: 10px; margin-bottom: 2px; }
         .tab-day { font-size: 16px; }
+
+        .sub-tabs { display: flex; justify-content: center; gap: 10px; margin-top: 10px; padding-bottom: 5px; }
+        .sub-tab-btn { background: rgba(0,0,0,0.1); color: rgba(255,255,255,0.8); border: none; padding: 6px 15px; border-radius: 20px; font-size: 13px; cursor: pointer; }
+        .sub-tab-btn.active { background: white; color: var(--primary-color); font-weight: bold; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+
+        /* 行程卡片 */
         .content { padding: 20px; min-height: 300px; }
-        .timeline-item { position: relative; padding-left: 30px; margin-bottom: 20px; }
-        .timeline-item::before { content: ''; position: absolute; left: 7px; top: 15px; bottom: -25px; width: 2px; background: #D1D1D6; }
+        .timeline-item { position: relative; padding-left: 10px; margin-bottom: 20px; transition: transform 0.2s; } /* padding-left 調整配合拖曳把手 */
+        
+        /* 左側時間軸線 (調整位置) */
+        .timeline-item::before { content: ''; position: absolute; left: 24px; top: 15px; bottom: -25px; width: 2px; background: #D1D1D6; }
         .timeline-item:last-child::before { display: none; }
-        .timeline-item::after { content: ''; position: absolute; left: 0; top: 15px; width: 16px; height: 16px; background: var(--primary-color); border-radius: 50%; border: 3px solid #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        .card { background: var(--card-bg); border-radius: 16px; padding: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); display: flex; flex-direction: column; gap: 10px; position: relative; }
+        .timeline-item::after { content: ''; position: absolute; left: 17px; top: 15px; width: 16px; height: 16px; background: var(--primary-color); border-radius: 50%; border: 3px solid #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.1); z-index: 2; }
+        
+        .card { background: var(--card-bg); border-radius: 16px; padding: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); display: flex; flex-direction: column; gap: 10px; position: relative; margin-left: 20px; }
         .card-main { display: flex; align-items: flex-start; gap: 15px; width: 100%; }
-        .time-box { text-align: center; min-width: 50px; }
-        .time-box .ampm { font-size: 10px; color: #8E8E93; }
-        .time-box .time { font-size: 16px; font-weight: 700; color: #333; }
+
+        /* 新：拖曳手把 */
+        .drag-handle {
+            position: absolute; left: -35px; top: 50%; transform: translateY(-50%);
+            color: #ccc; font-size: 18px; padding: 10px; cursor: grab;
+            display: none; /* 預設隱藏 */
+        }
+        body.is-editing .drag-handle { display: block; }
+        
+        /* 新：時間輸入框 */
+        .time-box { text-align: center; min-width: 55px; display: flex; flex-direction: column; justify-content: center; }
+        .time-input {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            font-size: 18px; font-weight: 700; color: #333;
+            border: none; background: transparent;
+            text-align: center; width: 100%; padding: 0; margin: 0;
+            cursor: pointer;
+        }
+        /* 瀏覽模式下，讓時間看起來像純文字，不可點擊 */
+        body:not(.is-editing) .time-input { pointer-events: none; }
+        /* 編輯模式下，給時間一個提示底色 */
+        body.is-editing .time-input { background: rgba(0,0,0,0.05); border-radius: 6px; }
+
         .info-box { flex: 1; min-width: 0; }
         .info-title { font-size: 16px; font-weight: 600; color: #000; margin-bottom: 4px; line-height: 1.4; }
         .loc-wrapper { display: flex; align-items: center; gap: 8px; flex-wrap: wrap;}
         .info-loc { font-size: 12px; color: #8E8E93; display: flex; align-items: center; gap: 4px; }
         .map-link { display: inline-flex; align-items: center; gap: 3px; background: rgba(0, 122, 255, 0.1); color: var(--link-color); padding: 2px 8px; border-radius: 6px; font-size: 11px; text-decoration: none; font-weight: 600; white-space: nowrap; }
         .info-note { font-size: 12px; color: #FF9500; margin-top: 4px; line-height: 1.3; }
+        
         .memo-section { width: 100%; background: #FFF9E6; padding: 10px; border-radius: 8px; border-left: 3px solid #FFCC00; font-size: 13px; color: #555; line-height: 1.5; display: none; margin-top: 5px; white-space: pre-wrap; }
         .memo-section.show { display: block; }
         .memo-controls { display: none; gap: 10px; margin-top: 5px; font-size: 12px; }
         .add-memo-btn { color: var(--link-color); cursor: pointer; border: 1px dashed var(--link-color); padding: 4px 8px; border-radius: 4px; display: inline-block;}
         .del-memo-btn { color: var(--danger-color); cursor: pointer; display: inline-block; margin-left: auto;}
-        body.is-editing .memo-controls { display: flex; }
-        body.is-editing .memo-section { display: block !important; min-height: 40px; border: 1px dashed #ccc; background: #fff;}
+        
+        /* 清單樣式 */
         .checklist-container { padding: 20px; }
-        .checklist-category { margin-bottom: 25px; background: white; border-radius: 16px; padding: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .checklist-category { margin-bottom: 25px; background: white; border-radius: 16px; padding: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); position: relative; }
         .cat-title { font-size: 18px; font-weight: 700; color: var(--primary-color); margin-bottom: 10px; border-bottom: 2px solid #f0f0f0; padding-bottom: 5px; display: flex; justify-content: space-between; align-items: center;}
         .check-item { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid #f9f9f9; }
         .check-item:last-child { border-bottom: none; }
@@ -56,18 +92,31 @@
         .check-item.checked .custom-checkbox i { display: block; }
         .check-item.checked .item-text { text-decoration: line-through; color: #ccc; }
         .item-text { flex: 1; font-size: 15px; }
+        
+        /* 編輯功能顯示 */
+        body.is-editing .memo-controls, 
+        body.is-editing .del-check-btn, 
+        body.is-editing .add-check-row, 
+        body.is-editing .del-cat-btn,
+        body.is-editing .add-cat-btn { display: block; }
+        body.is-editing .memo-section { display: block !important; min-height: 40px; border: 1px dashed #ccc; background: #fff;}
+        body.is-editing .add-cat-btn { display: block; }
+        
         .del-check-btn { color: var(--danger-color); font-size: 14px; padding: 5px; display: none; }
         .add-check-row { display: none; text-align: center; margin-top: 10px; padding-top: 10px; border-top: 1px dashed #eee; }
         .add-check-btn { color: var(--link-color); font-size: 14px; cursor: pointer; }
-        body.is-editing .del-check-btn { display: block; }
-        body.is-editing .add-check-row { display: block; }
-        body.is-editing .item-text { border-bottom: 1px dashed #ccc; background: rgba(0,0,0,0.02); padding: 2px; }
+        .del-cat-btn { position: absolute; right: 10px; top: 10px; color: #ccc; font-size: 12px; display: none; cursor: pointer; }
+        .add-cat-btn { display: none; width: 100%; padding: 12px; background: white; border: 2px dashed #ccc; color: #888; border-radius: 12px; text-align: center; margin-top: 20px; cursor: pointer; }
+
+        /* 導航列 */
         .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; height: 60px; background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); border-top: 1px solid #e0e0e0; display: flex; justify-content: space-around; align-items: center; z-index: 900; }
         .nav-item { flex: 1; text-align: center; color: var(--text-gray); cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; }
         .nav-item i { font-size: 20px; }
         .nav-item span { font-size: 10px; font-weight: 500; }
         .nav-item.active { color: var(--primary-color); }
-        body.is-editing .time, body.is-editing .info-title, body.is-editing .info-loc, body.is-editing .info-note, body.is-editing .ampm, body.is-editing .cat-title span { border-bottom: 1px dashed #ccc; background: rgba(0,0,0,0.02) !important; padding: 2px; }
+        
+        /* 編輯模式通用 */
+        body.is-editing .info-title, body.is-editing .info-loc, body.is-editing .info-note, body.is-editing .cat-title span { border-bottom: 1px dashed #ccc; background: rgba(0,0,0,0.02) !important; padding: 2px; }
         body.is-editing .map-link { display: none; }
         .delete-btn { position: absolute; right: -10px; top: -10px; background: var(--danger-color); color: white; width: 24px; height: 24px; border-radius: 50%; display: none; justify-content: center; align-items: center; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.2); z-index: 10; }
         body.is-editing .delete-btn { display: flex; }
@@ -75,9 +124,11 @@
         body.is-editing .add-btn-container { display: block; }
         .add-btn { background: var(--primary-color); color: white; border: none; padding: 10px 20px; border-radius: 20px; font-size: 14px; box-shadow: 0 4px 10px rgba(88, 86, 214, 0.3); }
         
-        /* 狀態指示燈 */
         #status-indicator { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.8); color: white; padding: 8px 16px; border-radius: 30px; font-size: 12px; transition: 0.3s; z-index: 1000; display: none; align-items: center; gap: 5px; }
         #status-indicator.show { display: flex; }
+        
+        /* 拖曳時的樣式 */
+        .sortable-ghost { opacity: 0.4; background: #eee; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
@@ -90,6 +141,7 @@
                 <i class="fas fa-pen"></i> <span id="editBtnText">編輯</span>
             </button>
         </div>
+        
         <div id="itinerary-tabs" class="tabs">
             <button class="tab-btn active" onclick="switchDay('d1', this)"><span class="tab-date">週四</span><span class="tab-day">D1</span></button>
             <button class="tab-btn" onclick="switchDay('d2', this)"><span class="tab-date">週五</span><span class="tab-day">D2</span></button>
@@ -98,7 +150,11 @@
             <button class="tab-btn" onclick="switchDay('d5', this)"><span class="tab-date">週一</span><span class="tab-day">D5</span></button>
             <button class="tab-btn" onclick="switchDay('d6', this)"><span class="tab-date">週二</span><span class="tab-day">D6</span></button>
         </div>
-        <div id="checklist-header" style="display:none; color:white; font-size:14px; opacity:0.9;">出發前記得檢查行李喔！🎒</div>
+        
+        <div id="checklist-tabs" class="sub-tabs" style="display:none;">
+            <button class="sub-tab-btn active" onclick="switchChecklistType('pre', this)">🏠 行前準備</button>
+            <button class="sub-tab-btn" onclick="switchChecklistType('tour', this)">🧳 旅遊清單</button>
+        </div>
     </div>
 
     <div id="view-itinerary" class="page-view active">
@@ -108,6 +164,9 @@
 
     <div id="view-checklist" class="page-view">
         <div class="checklist-container" id="checklist-container"></div>
+        <div class="checklist-container">
+            <div class="add-cat-btn" onclick="addNewCategory()">+ 新增一個大分類</div>
+        </div>
     </div>
 
     <div id="status-indicator"><i class="fas fa-sync fa-spin"></i> 同步中...</div>
@@ -121,7 +180,6 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
 
     <script>
-        // --- V8 終極合併版設定 ---
         const firebaseConfig = {
             apiKey: "AIzaSyDTQeG0emT5pqRYwCebkyVyGttmy-t6crY",
             authDomain: "travel-d67d0.firebaseapp.com",
@@ -130,83 +188,56 @@
             messagingSenderId: "223292356224",
             appId: "1:223292356224:web:5511095a095ffc4080d865"
         };
-
-        // 初始化 Firebase
-        if (!firebase.apps.length) {
-            firebase.initializeApp(firebaseConfig);
-        }
+        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
-        const tripDocRef = db.collection("trips").doc("nagoya_2025_trip"); 
+        const tripDocRef = db.collection("trips").doc("nagoya_2025_trip_v10"); 
 
         const defaultData = {
             itinerary: {
-                d1: [
-                    { id: 101, ampm: "上午", time: "11:00", title: "抵達桃園機場", loc: "桃園機場 T1", note: "準備 Check-in", memo: "" },
-                    { id: 103, ampm: "晚上", time: "20:00", title: "飯店 Check-in", loc: "BASE LAYER Hotel", note: "放行李", memo: "" }
-                ],
+                d1: [{ id: 101, time: "11:00", title: "抵達桃園機場", loc: "機場", note: "", memo: "" }],
                 d2: [], d3: [], d4: [], d5: [], d6: []
             },
-            checklist: [
-                { category: "必備證件", items: [{ text: "護照", checked: false }, { text: "日幣", checked: false }] },
-                { category: "電子產品", items: [{ text: "手機", checked: false }, { text: "網卡", checked: false }] }
-            ]
+            checklist_pre: [{ category: "必備證件", items: [{ text: "護照", checked: false }] }],
+            checklist_tour: [{ category: "必買", items: [{ text: "藥妝", checked: false }] }]
         };
 
         let currentDay = 'd1';
+        let currentChecklistType = 'pre';
         let isEditing = false;
         let appData = JSON.parse(JSON.stringify(defaultData));
+        let sortableInstance = null; // 拖曳實例
 
-        window.onload = function() {
-            initRealtimeSync(); 
-        };
+        window.onload = function() { initRealtimeSync(); };
 
-        // --- 核心：即時同步 ---
         function initRealtimeSync() {
             showStatus("連線中...", true);
             tripDocRef.onSnapshot((doc) => {
                 if (doc.exists) {
                     const remoteData = doc.data();
-                    appData = remoteData;
-                    if(!document.activeElement.isContentEditable) {
+                    if (!isEditing || !appData.itinerary) {
+                        appData = remoteData;
+                        // 相容性檢查：如果舊資料有 ampm，這邊只取 time，time picker 會自動吃 HH:mm
                         renderSchedule();
                         renderChecklist();
                     }
-                    showStatus("已同步最新資料", false);
+                    showStatus("已同步", false);
                     setTimeout(() => hideStatus(), 2000);
-                } else {
-                    saveDataToCloud(); 
-                }
-            }, (error) => {
-                console.error("同步失敗:", error);
-                // 如果您看到這個錯誤，代表 Firebase 資料庫沒開通！
-                if(error.code === 'permission-denied' || error.code === 'not-found' || error.message.includes('not enabled')) {
-                    showStatus("錯誤：請到 Firebase Console 建立資料庫！", true);
-                } else {
-                    showStatus("連線失敗 (請檢查網路)", true);
-                }
-            });
+                } else { saveDataToCloud(true); }
+            }, (error) => { console.error(error); showStatus("同步失敗", true); });
         }
 
-        let saveTimeout;
-        function triggerSave() {
+        function saveDataToCloud(force = false) {
+            if (isEditing && !force) return;
             showStatus("儲存中...", true);
-            clearTimeout(saveTimeout);
-            saveTimeout = setTimeout(saveDataToCloud, 1000);
-        }
-
-        function saveDataToCloud() {
             tripDocRef.set(appData)
                 .then(() => {
                     showStatus("已儲存至雲端", false);
                     setTimeout(() => hideStatus(), 2000);
                 })
-                .catch((error) => {
-                    console.error("儲存失敗: ", error);
-                    showStatus("儲存失敗", true);
-                });
+                .catch((error) => { showStatus("儲存失敗", true); });
         }
 
-        // --- 介面渲染 ---
+        // --- 渲染與拖曳 ---
         function renderSchedule() {
             const container = document.getElementById('schedule-container');
             container.innerHTML = '';
@@ -216,19 +247,19 @@
             dayList.forEach((item, index) => {
                 let cleanLoc = item.loc ? item.loc.replace(/📍|🚗|🚄|✈️/g, '').trim() : "";
                 let mapUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(cleanLoc)}`;
-                let memoContent = item.memo || "";
-                let hasMemo = memoContent.length > 0;
+                let hasMemo = (item.memo || "").length > 0;
                 let memoDisplayClass = hasMemo ? "show" : "";
 
                 const div = document.createElement('div');
                 div.className = 'timeline-item';
+                div.setAttribute('data-index', index); // 為了拖曳排序識別
                 div.innerHTML = `
+                    <div class="drag-handle"><i class="fas fa-bars"></i></div>
                     <div class="card">
                         <div class="delete-btn" onclick="deleteItem(${index})"><i class="fas fa-times"></i></div>
                         <div class="card-main">
                             <div class="time-box">
-                                <div class="ampm" onblur="updateItinerary(${index}, 'ampm', this.innerText)">${item.ampm}</div>
-                                <div class="time" onblur="updateItinerary(${index}, 'time', this.innerText)">${item.time}</div>
+                                <input type="time" class="time-input" value="${item.time}" onchange="updateTime(${index}, this.value)">
                             </div>
                             <div class="info-box">
                                 <div class="info-title" onblur="updateItinerary(${index}, 'title', this.innerText)">${item.title}</div>
@@ -244,79 +275,75 @@
                                 ${!hasMemo ? `<div class="add-memo-btn" onclick="toggleMemo(${index}, true)">+ 新增備忘錄</div>` : ''}
                                 ${hasMemo ? `<div class="del-memo-btn" onclick="toggleMemo(${index}, false)"><i class="fas fa-trash"></i> 刪除備忘</div>` : ''}
                             </div>
-                            <div class="memo-section ${memoDisplayClass}" onblur="updateItinerary(${index}, 'memo', this.innerText)">${memoContent}</div>
+                            <div class="memo-section ${memoDisplayClass}" onblur="updateItinerary(${index}, 'memo', this.innerText)">${item.memo || ""}</div>
                         </div>
                     </div>`;
                 container.appendChild(div);
             });
             setEditable(isEditing);
-        }
 
-        function updateItinerary(index, key, value) {
-            if (!appData.itinerary[currentDay][index]) return;
-            appData.itinerary[currentDay][index][key] = value.trim();
-            triggerSave();
-        }
-        
-        function toggleMemo(index, show) {
-            if (!appData.itinerary[currentDay][index]) return;
-            appData.itinerary[currentDay][index].memo = show ? "請輸入..." : "";
-            renderSchedule(); triggerSave();
+            // 重新初始化拖曳功能 (僅在編輯模式下生效)
+            if (isEditing) {
+                if (sortableInstance) sortableInstance.destroy(); // 清除舊的
+                sortableInstance = new Sortable(container, {
+                    handle: '.drag-handle', // 只能拉把手
+                    animation: 150,
+                    ghostClass: 'sortable-ghost',
+                    onEnd: function (evt) {
+                        // 拖曳結束，更新資料陣列順序
+                        const list = appData.itinerary[currentDay];
+                        const item = list.splice(evt.oldIndex, 1)[0];
+                        list.splice(evt.newIndex, 0, item);
+                        // 不存檔，等按完成才存
+                    }
+                });
+            }
         }
 
         function renderChecklist() {
+            // (清單渲染邏輯與 V9 相同，為節省篇幅省略，但程式碼中需包含)
             const container = document.getElementById('checklist-container');
             container.innerHTML = '';
-            (appData.checklist || []).forEach((cat, catIndex) => {
+            const targetList = currentChecklistType === 'pre' ? appData.checklist_pre : appData.checklist_tour;
+            (targetList || []).forEach((cat, catIndex) => {
                 const catDiv = document.createElement('div');
                 catDiv.className = 'checklist-category';
                 let itemsHtml = '';
                 cat.items.forEach((item, itemIndex) => {
-                    itemsHtml += `
-                        <div class="check-item ${item.checked ? 'checked' : ''}">
-                            <div class="custom-checkbox" onclick="toggleCheck(${catIndex}, ${itemIndex})"><i class="fas fa-check"></i></div>
-                            <div class="item-text" onblur="updateCheckItem(${catIndex}, ${itemIndex}, this.innerText)">${item.text}</div>
-                            <div class="del-check-btn" onclick="deleteCheckItem(${catIndex}, ${itemIndex})"><i class="fas fa-minus-circle"></i></div>
-                        </div>`;
+                    itemsHtml += `<div class="check-item ${item.checked ? 'checked' : ''}"><div class="custom-checkbox" onclick="toggleCheck(${catIndex}, ${itemIndex})"><i class="fas fa-check"></i></div><div class="item-text" onblur="updateCheckItem(${catIndex}, ${itemIndex}, this.innerText)">${item.text}</div><div class="del-check-btn" onclick="deleteCheckItem(${catIndex}, ${itemIndex})"><i class="fas fa-minus-circle"></i></div></div>`;
                 });
-                catDiv.innerHTML = `<div class="cat-title"><span onblur="updateCatTitle(${catIndex}, this.innerText)">${cat.category}</span></div><div class="cat-items">${itemsHtml}</div><div class="add-check-row"><div class="add-check-btn" onclick="addCheckItem(${catIndex})">+ 新增項目</div></div>`;
+                catDiv.innerHTML = `<div class="del-cat-btn" onclick="deleteCategory(${catIndex})">刪除分類</div><div class="cat-title"><span onblur="updateCatTitle(${catIndex}, this.innerText)">${cat.category}</span></div><div class="cat-items">${itemsHtml}</div><div class="add-check-row"><div class="add-check-btn" onclick="addCheckItem(${catIndex})">+ 新增項目</div></div>`;
                 container.appendChild(catDiv);
             });
             setEditable(isEditing);
         }
 
-        function toggleCheck(catIndex, itemIndex) {
-            if(isEditing) return;
-            appData.checklist[catIndex].items[itemIndex].checked = !appData.checklist[catIndex].items[itemIndex].checked;
-            renderChecklist(); triggerSave();
+        // --- 互動功能 ---
+        function updateTime(i, val) {
+            if(appData.itinerary[currentDay][i]) appData.itinerary[currentDay][i].time = val;
         }
-        function updateCheckItem(c, i, v) { appData.checklist[c].items[i].text = v.trim(); triggerSave(); }
-        function updateCatTitle(c, v) { appData.checklist[c].category = v.trim(); triggerSave(); }
-        function addCheckItem(c) { appData.checklist[c].items.push({ text: "新項目", checked: false }); renderChecklist(); triggerSave(); }
-        function deleteCheckItem(c, i) { if(confirm('刪除？')) { appData.checklist[c].items.splice(i, 1); renderChecklist(); triggerSave(); } }
+        function updateItinerary(i, k, v) { if(appData.itinerary[currentDay][i]) appData.itinerary[currentDay][i][k] = v.trim(); }
+        function toggleMemo(i, s) { if(appData.itinerary[currentDay][i]) appData.itinerary[currentDay][i].memo = s ? "輸入..." : ""; renderSchedule(); }
 
-        function switchDay(dayId, btn) { currentDay = dayId; document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active')); btn.classList.add('active'); renderSchedule(); }
-        function switchPage(pageName, navBtn) {
-            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active')); navBtn.classList.add('active');
-            document.querySelectorAll('.page-view').forEach(el => el.classList.remove('active')); document.getElementById('view-' + pageName).classList.add('active');
-            if(pageName === 'itinerary') { document.getElementById('itinerary-tabs').style.display = 'flex'; document.getElementById('checklist-header').style.display = 'none'; }
-            else { document.getElementById('itinerary-tabs').style.display = 'none'; document.getElementById('checklist-header').style.display = 'block'; }
-        }
-        
-        // --- 密碼與編輯切換 ---
+        // 清單與分類功能 (同 V9)
+        function toggleCheck(ci, ii) { if(isEditing) return; const list = getList(); list[ci].items[ii].checked = !list[ci].items[ii].checked; renderChecklist(); saveDataToCloud(true); }
+        function updateCheckItem(c, i, v) { getList()[c].items[i].text = v.trim(); }
+        function updateCatTitle(c, v) { getList()[c].category = v.trim(); }
+        function addCheckItem(c) { getList()[c].items.push({ text: "新項目", checked: false }); renderChecklist(); }
+        function deleteCheckItem(c, i) { if(confirm('刪除項目？')) { getList()[c].items.splice(i, 1); renderChecklist(); } }
+        function addNewCategory() { getList().push({ category: "新分類", items: [] }); renderChecklist(); }
+        function deleteCategory(c) { if(confirm('刪除分類？')) { getList().splice(c, 1); renderChecklist(); } }
+        function getList() { return currentChecklistType === 'pre' ? appData.checklist_pre : appData.checklist_tour; }
+
         function toggleEditMode() {
             if (!isEditing) {
-                // ★ 密碼設定處 ★
                 const myPassword = "8888"; 
                 if (!sessionStorage.getItem('isAuth')) {
                     const input = prompt("請輸入編輯密碼：");
-                    if (input === null || input !== myPassword) {
-                        alert("密碼錯誤！🙅‍♂️");
-                        return; 
-                    }
+                    if (input === null || input !== myPassword) { alert("密碼錯誤！"); return; }
                     sessionStorage.setItem('isAuth', 'true');
                 }
-            }
+            } else { saveDataToCloud(true); } // 完成時存檔
             isEditing = !isEditing;
             const btnText = document.getElementById('editBtnText');
             const toggleBtn = document.querySelector('.edit-toggle');
@@ -326,17 +353,20 @@
             setEditable(isEditing);
             renderSchedule(); renderChecklist();
         }
-        
-        function setEditable(editable) { document.querySelectorAll('.time, .info-title, .info-loc, .info-note, .ampm, .memo-section, .item-text, .cat-title span').forEach(field => { field.contentEditable = editable; }); }
-        function addNewItem() { if (!appData.itinerary[currentDay]) appData.itinerary[currentDay] = []; appData.itinerary[currentDay].push({ id: Date.now(), ampm: "時段", time: "00:00", title: "新行程", loc: "地點", note: "備註", memo: "" }); renderSchedule(); triggerSave(); }
-        function deleteItem(index) { if(confirm('刪除？')) { appData.itinerary[currentDay].splice(index, 1); renderSchedule(); triggerSave(); } }
-        
-        function showStatus(msg, isError) {
-            const el = document.getElementById('status-indicator');
-            el.innerHTML = isError ? `<i class="fas fa-exclamation-circle"></i> ${msg}` : `<i class="fas fa-check"></i> ${msg}`;
-            el.style.background = isError ? 'rgba(255, 59, 48, 0.9)' : 'rgba(0,0,0,0.8)';
-            el.classList.add('show');
+
+        // 通用
+        function switchDay(d, b) { currentDay = d; document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active')); b.classList.add('active'); renderSchedule(); }
+        function switchChecklistType(t, b) { currentChecklistType = t; document.querySelectorAll('.sub-tab-btn').forEach(el => el.classList.remove('active')); b.classList.add('active'); renderChecklist(); }
+        function switchPage(p, b) {
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active')); b.classList.add('active');
+            document.querySelectorAll('.page-view').forEach(el => el.classList.remove('active')); document.getElementById('view-' + p).classList.add('active');
+            if(p === 'itinerary') { document.getElementById('itinerary-tabs').style.display = 'flex'; document.getElementById('checklist-tabs').style.display = 'none'; }
+            else { document.getElementById('itinerary-tabs').style.display = 'none'; document.getElementById('checklist-tabs').style.display = 'flex'; }
         }
+        function setEditable(e) { document.querySelectorAll('.info-title, .info-loc, .info-note, .memo-section, .item-text, .cat-title span').forEach(f => { f.contentEditable = e; }); }
+        function addNewItem() { if (!appData.itinerary[currentDay]) appData.itinerary[currentDay] = []; appData.itinerary[currentDay].push({ id: Date.now(), time: "12:00", title: "新行程", loc: "地點", note: "備註", memo: "" }); renderSchedule(); }
+        function deleteItem(i) { if(confirm('刪除？')) { appData.itinerary[currentDay].splice(i, 1); renderSchedule(); } }
+        function showStatus(m, e) { const el = document.getElementById('status-indicator'); el.innerHTML = e ? `<i class="fas fa-exclamation-circle"></i> ${m}` : `<i class="fas fa-check"></i> ${m}`; el.style.background = e ? 'rgba(255, 59, 48, 0.9)' : 'rgba(0,0,0,0.8)'; el.classList.add('show'); }
         function hideStatus() { document.getElementById('status-indicator').classList.remove('show'); }
         document.addEventListener('paste', function (e) { if (e.target.isContentEditable) { e.preventDefault(); const text = (e.clipboardData || window.clipboardData).getData('text'); document.execCommand('insertText', false, text); } });
     </script>
