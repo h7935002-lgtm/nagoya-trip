@@ -7,132 +7,57 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
     <style>
-        /* --- V14.0 UI 設定 --- */
+        /* --- UI 設定 --- */
         :root {
-            --primary-color: #5856D6; /* iOS Deep Purple */
-            --primary-dark: #4a48b8;
-            --bg-color: #F2F2F7;
-            --card-bg: #FFFFFF;
-            --danger-color: #FF3B30;
-            --success-color: #34C759;
-            --text-dark: #1C1C1E;
-            --text-gray: #8E8E93;
-            --line-color: #E5E5EA;
+            --primary-color: #5856D6; --bg-color: #F5F5FA; --card-bg: #FFFFFF;
+            --danger-color: #FF3B30; --success-color: #34C759; --text-dark: #1C1C1E; --text-gray: #8E8E93; --line-color: #E5E5EA;
         }
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--bg-color);
-            margin: 0; padding: 0;
-            padding-top: 180px; /* 留給 Header 的空間 */
-            padding-bottom: 40px;
-            -webkit-tap-highlight-color: transparent;
-            color: var(--text-dark);
+            background-color: var(--bg-color); margin: 0; padding: 0;
+            padding-top: 180px; padding-bottom: 50px; -webkit-tap-highlight-color: transparent; color: var(--text-dark);
         }
-
-        /* --- Fixed Header (大改版) --- */
+        /* Header */
         .header {
-            background: var(--primary-color);
-            padding: 15px 20px 0px 20px; /* 底部padding由tabs撐開 */
-            border-bottom-left-radius: 24px;
-            border-bottom-right-radius: 24px;
-            color: white;
-            box-shadow: 0 4px 20px rgba(88, 86, 214, 0.4);
+            background: var(--primary-color); padding: 15px 20px 0px 20px;
+            border-bottom-left-radius: 24px; border-bottom-right-radius: 24px;
+            color: white; box-shadow: 0 4px 20px rgba(88, 86, 214, 0.4);
             position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
-            transition: height 0.3s;
         }
-
-        /* 上半部：標題與切換按鈕 */
-        .header-top-row {
-            display: flex; justify-content: space-between; align-items: flex-start;
-            margin-bottom: 15px;
-        }
-
-        /* 標題區 */
-        .title-group { flex: 1; margin-right: 10px; }
-        .trip-title { 
-            font-size: 24px; font-weight: 800; letter-spacing: 0.5px; line-height: 1.2;
-            border-bottom: 1px dashed transparent; 
-        }
-        .trip-subtitle { 
-            font-size: 13px; opacity: 0.8; margin-top: 4px; font-weight: 500;
-            border-bottom: 1px dashed transparent; display: inline-block;
-        }
-        /* 編輯模式下標題顯示虛線 */
-        body.is-editing .trip-title, body.is-editing .trip-subtitle {
-            border-bottom: 1px dashed rgba(255,255,255,0.5); background: rgba(0,0,0,0.1); border-radius: 4px; padding: 0 4px;
-        }
-
-        /* 右上角控制區 (切換視圖 + 編輯) */
-        .controls { display: flex; gap: 8px; }
+        .header-top-row { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; }
+        .trip-title { font-size: 24px; font-weight: 800; letter-spacing: 0.5px; line-height: 1.2; border-bottom: 1px dashed transparent; }
+        .trip-subtitle { font-size: 13px; opacity: 0.8; margin-top: 4px; font-weight: 500; border-bottom: 1px dashed transparent; display: inline-block; }
+        body.is-editing .trip-title, body.is-editing .trip-subtitle { border-bottom: 1px dashed rgba(255,255,255,0.5); background: rgba(0,0,0,0.1); border-radius: 4px; padding: 0 4px; }
         
-        /* 視圖切換按鈕 (仿截圖 Icon) */
-        .view-btn {
-            width: 36px; height: 36px; border-radius: 12px; border: none;
-            background: rgba(255,255,255,0.2); color: rgba(255,255,255,0.7);
-            display: flex; align-items: center; justify-content: center;
-            font-size: 16px; cursor: pointer; transition: 0.2s;
-        }
-        .view-btn.active {
-            background: white; color: var(--primary-color); font-weight: bold;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-        }
-
-        /* 編輯按鈕 */
-        .edit-toggle {
-            height: 36px; padding: 0 12px; border-radius: 12px; border: none;
-            background: rgba(0,0,0,0.2); color: white; font-size: 13px; font-weight: 600;
-            display: flex; align-items: center; gap: 5px; cursor: pointer;
-        }
+        .controls { display: flex; gap: 8px; }
+        .view-btn { width: 36px; height: 36px; border-radius: 12px; border: none; background: rgba(255,255,255,0.2); color: rgba(255,255,255,0.7); display: flex; align-items: center; justify-content: center; font-size: 16px; cursor: pointer; transition: 0.2s; }
+        .view-btn.active { background: white; color: var(--primary-color); font-weight: bold; box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
+        .edit-toggle { height: 36px; padding: 0 12px; border-radius: 12px; border: none; background: rgba(0,0,0,0.2); color: white; font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 5px; cursor: pointer; }
         .edit-toggle.editing { background: var(--success-color); }
 
-        /* --- 下半部：Tabs 區域 --- */
         .tabs-container { padding-bottom: 15px; overflow: hidden; }
-        
-        /* 行程 Tabs (Day 1...) */
         .tabs { display: flex; overflow-x: auto; gap: 10px; scrollbar-width: none; padding: 4px; }
         .tabs::-webkit-scrollbar { display: none; }
-        .tab-btn {
-            background: rgba(255,255,255,0.15); border: none; color: rgba(255,255,255,0.8);
-            padding: 8px 0; border-radius: 14px; width: 60px; flex-shrink: 0;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            cursor: pointer; transition: 0.2s;
-        }
-        .tab-btn.active {
-            background: white; color: var(--primary-color); font-weight: bold;
-            transform: scale(1.05); box-shadow: 0 4px 10px rgba(0,0,0,0.2); color: var(--primary-color) !important;
-        }
+        .tab-btn { background: rgba(255,255,255,0.15); border: none; color: rgba(255,255,255,0.8); padding: 8px 0; border-radius: 14px; width: 60px; flex-shrink: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; }
+        .tab-btn.active { background: white; color: var(--primary-color); font-weight: bold; transform: scale(1.05); box-shadow: 0 4px 10px rgba(0,0,0,0.2); color: var(--primary-color) !important; }
         .tab-date { font-size: 10px; margin-bottom: 2px; }
         .tab-day { font-size: 16px; font-weight: 800; }
-
-        /* 清單 Tabs (行前/旅遊) */
         .sub-tabs { display: none; justify-content: flex-start; gap: 10px; padding: 4px; }
-        .sub-tab-btn {
-            background: rgba(0,0,0,0.2); color: rgba(255,255,255,0.8); border: none;
-            padding: 8px 20px; border-radius: 20px; font-size: 14px; font-weight: 600; cursor: pointer;
-        }
+        .sub-tab-btn { background: rgba(0,0,0,0.2); color: rgba(255,255,255,0.8); border: none; padding: 8px 20px; border-radius: 20px; font-size: 14px; font-weight: 600; cursor: pointer; }
         .sub-tab-btn.active { background: white; color: var(--primary-color); }
 
-        /* --- 內容區 --- */
+        /* Content */
         .content { padding: 10px 20px; min-height: 300px; display: none; }
         .content.active { display: block; animation: fadeIn 0.3s; }
-
-        /* Timeline 樣式 (維持 V13) */
         .timeline-item { position: relative; padding-left: 20px; margin-bottom: 20px; }
         .timeline-item::before { content: ''; position: absolute; left: 9px; top: 25px; bottom: -45px; width: 2px; background: var(--line-color); }
         .timeline-item:last-child::before { display: none; }
         .timeline-item::after { content: ''; position: absolute; left: 2px; top: 25px; width: 12px; height: 12px; background: var(--primary-color); border-radius: 50%; border: 2px solid white; box-shadow: 0 0 0 2px var(--primary-color); z-index: 2; }
-
-        .card {
-            background: var(--card-bg); border-radius: 20px; padding: 15px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.02);
-            display: flex; gap: 15px; position: relative;
-        }
-
-        /* 樣式細節 */
+        .card { background: var(--card-bg); border-radius: 20px; padding: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.02); display: flex; gap: 15px; position: relative; }
+        
         .time-col { display: flex; flex-direction: column; align-items: center; min-width: 65px; border-right: 1px dashed #EEE; padding-right: 15px; padding-top: 5px; }
         .ampm { font-size: 11px; color: var(--text-gray); font-weight: 500; }
         .time { font-size: 18px; font-weight: 800; color: var(--text-dark); letter-spacing: -0.5px; }
-        
         .type-badge { margin-top: 6px; padding: 3px 8px; border-radius: 8px; font-size: 10px; font-weight: 600; color: #666; background: #F2F2F7; }
         .type-select { margin-top: 6px; width: 100%; font-size: 11px; display: none; }
         body.is-editing .type-badge { display: none; }
@@ -141,19 +66,17 @@
         .info-col { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
         .info-title { font-size: 16px; font-weight: 700; color: var(--text-dark); line-height: 1.3; }
         .info-loc { font-size: 12px; color: var(--text-gray); display: flex; align-items: center; gap: 5px; flex-wrap: wrap; }
-        .nav-btn { background: rgba(88, 86, 214, 0.1); color: var(--primary-color); padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: 700; text-decoration: none; display: inline-flex; align-items: center; gap: 2px; }
-        
+        .nav-btn { background: rgba(88, 86, 214, 0.1); color: var(--primary-color); padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: 700; text-decoration: none; display: inline-flex; align-items: center; gap: 2px; cursor: pointer; }
+        .info-note { font-size: 13px; color: #FF9500; font-weight: 500; margin-top: 2px; }
         .memo-box { margin-top: 8px; background: #FFF9E6; border-left: 3px solid #FFCC00; padding: 8px; border-radius: 6px; font-size: 12px; color: #665C3B; display: none; }
         .memo-box.show { display: block; }
 
-        /* 編輯介面 */
         .drag-handle { position: absolute; left: -25px; top: 50%; transform: translateY(-50%); color: #CCC; font-size: 16px; display: none; cursor: grab; padding: 10px;}
         body.is-editing .drag-handle { display: block; }
-        
         .delete-btn { position: absolute; right: -8px; top: -8px; width: 22px; height: 22px; background: var(--danger-color); color: white; border-radius: 50%; display: none; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(0,0,0,0.2); cursor: pointer; z-index: 10; font-size: 12px;}
         body.is-editing .delete-btn { display: flex; }
 
-        /* 清單樣式 */
+        /* Checklist */
         .checklist-container { padding: 10px 20px; }
         .checklist-category { background: white; border-radius: 16px; padding: 15px; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.03); }
         .cat-title { font-weight: 700; color: var(--primary-color); border-bottom: 1px solid #EEE; padding-bottom: 8px; margin-bottom: 8px; display:flex; justify-content:space-between;}
@@ -164,13 +87,10 @@
         .custom-checkbox i { display: none; }
         .check-item.checked .item-text { text-decoration: line-through; color: #CCC; }
 
-        /* 編輯提示框 */
+        /* Edit Mode Styles */
         body.is-editing .info-title, body.is-editing .info-loc span, body.is-editing .info-note, body.is-editing .time { border-bottom: 1px dashed #CCC; background: rgba(0,0,0,0.02); min-width: 20px; }
-        
-        /* 隱藏/顯示控制 */
         .del-check-btn, .del-cat-btn, .add-check-row, .add-cat-btn, .add-btn-container { display: none; }
         body.is-editing .del-check-btn, body.is-editing .del-cat-btn, body.is-editing .add-check-row, body.is-editing .add-cat-btn, body.is-editing .add-btn-container { display: block; }
-        
         .add-btn { background: var(--primary-color); color: white; border: none; padding: 10px 20px; border-radius: 30px; font-size: 13px; font-weight: 600; box-shadow: 0 4px 10px rgba(88,86,214,0.3); margin-top: 10px; }
         .add-cat-btn { width: 100%; text-align: center; padding: 15px; background: white; border: 2px dashed #DDD; border-radius: 12px; color: #AAA; margin-top: 10px; cursor: pointer;}
         .del-check-btn { color: var(--danger-color); margin-left: auto; cursor: pointer; }
@@ -190,18 +110,11 @@
                 <div class="trip-subtitle" contenteditable="false" onblur="updateSubtitle(this.innerText)">DEC 05 - DEC 09, 2025</div>
             </div>
             <div class="controls">
-                <button id="btn-view-itinerary" class="view-btn active" onclick="switchView('itinerary')">
-                    <i class="far fa-calendar-alt"></i>
-                </button>
-                <button id="btn-view-checklist" class="view-btn" onclick="switchView('checklist')">
-                    <i class="fas fa-tasks"></i>
-                </button>
-                <button class="edit-toggle" onclick="toggleEditMode()">
-                    <i class="fas fa-pen"></i>
-                </button>
+                <button id="btn-view-itinerary" class="view-btn active" onclick="switchView('itinerary')"><i class="far fa-calendar-alt"></i></button>
+                <button id="btn-view-checklist" class="view-btn" onclick="switchView('checklist')"><i class="fas fa-tasks"></i></button>
+                <button class="edit-toggle" onclick="toggleEditMode()"><i class="fas fa-pen"></i></button>
             </div>
         </div>
-        
         <div class="tabs-container">
             <div id="tabs-itinerary" class="tabs">
                 <button class="tab-btn active" onclick="switchDay('d1', this)"><span class="tab-date">週四</span><span class="tab-day">D1</span></button>
@@ -211,7 +124,6 @@
                 <button class="tab-btn" onclick="switchDay('d5', this)"><span class="tab-date">週一</span><span class="tab-day">D5</span></button>
                 <button class="tab-btn" onclick="switchDay('d6', this)"><span class="tab-date">週二</span><span class="tab-day">D6</span></button>
             </div>
-            
             <div id="tabs-checklist" class="sub-tabs">
                 <button class="sub-tab-btn active" onclick="switchChecklistType('pre', this)">🏠 行前準備</button>
                 <button class="sub-tab-btn" onclick="switchChecklistType('tour', this)">🧳 旅遊清單</button>
@@ -245,14 +157,64 @@
         };
         if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
-        const tripDocRef = db.collection("trips").doc("nagoya_2025_trip_v14"); 
+        // ★ 更新檔案名稱，確保載入新資料 ★
+        const tripDocRef = db.collection("trips").doc("nagoya_2025_trip_v15_final"); 
 
+        // --- 完整行程資料 ---
         const defaultData = {
             meta: { title: "🇯🇵 名古屋・白川鄉", subtitle: "DEC 05 - DEC 09, 2025" },
-            itinerary: { d1: [{ id: 101, time: "11:00", type: "✈️ 飛行", title: "抵達桃園機場", loc: "機場", note: "", memo: "" }], d2: [], d3: [], d4: [], d5: [], d6: [] },
-            checklist_pre: [{ category: "必備證件", items: [{ text: "護照", checked: false }] }],
-            checklist_tour: [{ category: "必買", items: [{ text: "藥妝", checked: false }] }],
-            activityTypes: ["✈️ 飛行", "🚄 交通", "🎡 景點", "🍴 用餐", "🏨 住宿", "🛍️ 購物"]
+            itinerary: {
+                d1: [
+                    { id: 101, time: "11:00", type: "✈️ 飛行", title: "抵達桃園機場", loc: "桃園機場第一航廈", note: "準備 Check-in", memo: "" },
+                    { id: 102, time: "15:00", type: "✈️ 飛行", title: "飛往中部國際空港", loc: "中部國際空港", note: "18:30 抵達", memo: "" },
+                    { id: 103, time: "18:30", type: "🚄 交通", title: "從中部國際空港 到 飯店", loc: "名古屋市區", note: "交通移動", memo: "" },
+                    { id: 104, time: "20:00", type: "🏨 住宿", title: "飯店 Check-in", loc: "BASE LAYER Hotel", note: "放行李、休息", memo: "" },
+                    { id: 105, time: "20:45", type: "🍴 用餐", title: "晚餐 / 自由時間", loc: "飯店附近", note: "", memo: "" }
+                ],
+                d2: [
+                    { id: 201, time: "07:00", type: "🏨 住宿", title: "退房", loc: "BASE LAYER Hotel", note: "", memo: "" },
+                    { id: 202, time: "07:30", type: "🚄 交通", title: "JR 飛驒特急列車", loc: "名古屋 -> 高山市", note: "車程約 2.5 小時", memo: "" },
+                    { id: 203, time: "09:30", type: "🚗 交通", title: "租車", loc: "高山市", note: "自駕前往白川鄉", memo: "" },
+                    { id: 204, time: "10:00", type: "🚗 交通", title: "車程", loc: "往白川鄉", note: "", memo: "" },
+                    { id: 205, time: "11:00", type: "🍴 用餐", title: "中餐", loc: "白川鄉", note: "", memo: "" },
+                    { id: 206, time: "11:45", type: "🎡 景點", title: "白川鄉 合掌村", loc: "白川鄉合掌村", note: "觀光至 18:00", memo: "" },
+                    { id: 207, time: "18:00", type: "🏨 住宿", title: "飯店 Check-in", loc: "高山地區飯店", note: "", memo: "" },
+                    { id: 208, time: "18:30", type: "🍴 用餐", title: "自由時間 / 晚餐", loc: "高山老街周邊", note: "", memo: "" }
+                ],
+                d3: [
+                    { id: 301, time: "09:00", type: "🏨 住宿", title: "退房", loc: "高山飯店", note: "", memo: "" },
+                    { id: 302, time: "09:30", type: "🚗 交通", title: "車程", loc: "前往老街", note: "", memo: "" },
+                    { id: 303, time: "10:30", type: "🎡 景點", title: "飛驒高山老街", loc: "上三之町", note: "逛街、吃飛驒牛壽司", memo: "" },
+                    { id: 304, time: "17:00", type: "🚗 交通", title: "還車", loc: "高山租車點", note: "", memo: "" },
+                    { id: 305, time: "17:30", type: "🚄 交通", title: "JR 飛驒特急列車", loc: "高山 -> 名古屋", note: "返回市區", memo: "" },
+                    { id: 306, time: "19:30", type: "🏨 住宿", title: "飯店 Check-in", loc: "名古屋市區飯店", note: "", memo: "" },
+                    { id: 307, time: "20:00", type: "🛍️ 購物", title: "自由時間", loc: "名古屋車站周邊", note: "", memo: "" }
+                ],
+                d4: [
+                    { id: 401, time: "08:15", type: "🎡 景點", title: "名古屋城", loc: "名古屋城", note: "參觀至 10:15", memo: "" },
+                    { id: 402, time: "10:15", type: "🍴 用餐", title: "金鯱橫丁", loc: "名古屋城旁", note: "美食街午餐", memo: "" },
+                    { id: 403, time: "11:30", type: "🛍️ 購物", title: "榮町 -> 矢場町", loc: "榮町商圈", note: "逛街購物", memo: "" },
+                    { id: 404, time: "12:30", type: "🍴 用餐", title: "午餐", loc: "榮町", note: "", memo: "" },
+                    { id: 405, time: "14:45", type: "🛍️ 購物", title: "寶可夢中心 名古屋店", loc: "Pokemon Center Nagoya", note: "松坂屋", memo: "" },
+                    { id: 406, time: "15:30", type: "🎡 景點", title: "三輪神社", loc: "三輪神社", note: "兔子神社", memo: "" },
+                    { id: 407, time: "17:30", type: "🛍️ 購物", title: "大須商店街", loc: "大須商店街", note: "逛街吃晚餐", memo: "" },
+                    { id: 408, time: "19:45", type: "🎡 景點", title: "中部電力 MIRAI TOWER", loc: "久屋大通公園", note: "看夜景", memo: "" }
+                ],
+                d5: [
+                    { id: 501, time: "08:00", type: "🛍️ 購物", title: "JR 中央大廈", loc: "JR Central Towers", note: "全日行程 / 購物", memo: "" },
+                    { id: 502, time: "20:00", type: "🛍️ 購物", title: "自由時間", loc: "市區", note: "整理行李", memo: "" }
+                ],
+                d6: [
+                    { id: 601, time: "08:30", type: "🏨 住宿", title: "退房", loc: "名古屋", note: "", memo: "" },
+                    { id: 602, time: "14:30", type: "🚄 交通", title: "前往機場 / 報到", loc: "中部國際空港", note: "", memo: "" },
+                    { id: 603, time: "16:00", type: "🛍️ 購物", title: "抵達機場 / 最後採買", loc: "中部國際空港 T1", note: "", memo: "" },
+                    { id: 604, time: "19:30", type: "✈️ 飛行", title: "搭機返台", loc: "飛行中", note: "預計 22:15 抵達桃園", memo: "" },
+                    { id: 605, time: "22:15", type: "🏠 返家", title: "抵達桃園機場", loc: "桃園機場", note: "平安回家", memo: "" }
+                ]
+            },
+            checklist_pre: [{ category: "必備證件", items: [{ text: "護照 (效期6個月以上)", checked: false }, { text: "VJW 入境截圖", checked: false }, { text: "日幣 / 信用卡", checked: false }] }],
+            checklist_tour: [{ category: "必買伴手禮", items: [{ text: "蝦餅", checked: false }, { text: "合掌村磁鐵", checked: false }] }],
+            activityTypes: ["✈️ 飛行", "🚄 交通", "🎡 景點", "🍴 用餐", "🏨 住宿", "🛍️ 購物", "🚗 交通", "🏠 返家"]
         };
 
         let currentDay = 'd1';
@@ -272,11 +234,8 @@
                         appData = remoteData;
                         if(!appData.meta) appData.meta = defaultData.meta;
                         if(!appData.activityTypes) appData.activityTypes = defaultData.activityTypes;
-                        
-                        // 更新標題
                         document.querySelector('.trip-title').innerText = appData.meta.title;
                         document.querySelector('.trip-subtitle').innerText = appData.meta.subtitle;
-                        
                         renderSchedule(); renderChecklist();
                     }
                     showStatus("已同步", false);
@@ -293,13 +252,9 @@
                 .catch((e) => showStatus("儲存失敗"));
         }
 
-        // --- View Switching ---
         function switchView(view) {
-            // 切換按鈕狀態
             document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
             document.getElementById('btn-view-' + view).classList.add('active');
-            
-            // 切換內容與 Tabs
             if (view === 'itinerary') {
                 document.getElementById('container-itinerary').classList.add('active');
                 document.getElementById('container-checklist').classList.remove('active');
@@ -313,11 +268,9 @@
             }
         }
 
-        // --- Title / Subtitle Editing ---
         function updateTitle(val) { appData.meta.title = val.trim(); saveDataToCloud(true); }
         function updateSubtitle(val) { appData.meta.subtitle = val.trim(); saveDataToCloud(true); }
 
-        // --- Core Logic ---
         function getPeriod(timeStr) {
             if(!timeStr || !timeStr.includes(":")) return "";
             const h = parseInt(timeStr.split(":")[0]);
@@ -457,7 +410,6 @@
             document.body.classList.toggle('is-editing', isEditing);
             btn.classList.toggle('editing', isEditing);
             
-            // 標題編輯開關
             document.querySelector('.trip-title').contentEditable = isEditing;
             document.querySelector('.trip-subtitle').contentEditable = isEditing;
 
