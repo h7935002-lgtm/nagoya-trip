@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>名古屋・白川鄉冬旅</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* --- 基礎設定 --- */
+        :root {
+            --primary-color: #5856D6;
+            --bg-color: #F2F2F7;
+            --card-bg: #FFFFFF;
+            --danger-color: #FF3B30;
+            --success-color: #34C759;
+            --link-color: #007AFF;
+            --text-gray: #8E8E93;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg-color);
+            margin: 0; padding: 0; 
+            padding-bottom: 90px; /* 留給底部導航空間 */
+            -webkit-tap-highlight-color: transparent;
+            -webkit-text-size-adjust: 100%;
+        }
+
+        /* --- 頂部 Header --- */
+        .header {
+            background: var(--primary-color); color: white;
+            padding: 20px 20px 10px 20px;
+            border-bottom-left-radius: 20px; border-bottom-right-radius: 20px;
+            position: sticky; top: 0; z-index: 100;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .trip-title { font-size: 22px; font-weight: 800; }
+        
+        /* 編輯按鈕 */
+        .edit-toggle {
+            background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.4);
+            color: white; padding: 5px 12px; border-radius: 20px; font-size: 12px;
+            cursor: pointer; display: flex; align-items: center; gap: 5px;
+        }
+        .edit-toggle.editing { background: var(--success-color); border-color: transparent; }
+
+        /* --- 頁面切換顯示 --- */
+        .page-view { display: none; animation: fadeIn 0.3s; }
+        .page-view.active { display: block; }
+
+        /* --- 行程表樣式 (Itinerary) --- */
+        .tabs { display: flex; overflow-x: auto; gap: 10px; padding-bottom: 10px; scrollbar-width: none; }
+        .tabs::-webkit-scrollbar { display: none; }
+        .tab-btn {
+            background: rgba(255,255,255,0.2); border: none; color: white;
+            padding: 8px 16px; border-radius: 12px; min-width: 55px;
+            display: flex; flex-direction: column; align-items: center;
+            cursor: pointer; transition: 0.2s; flex-shrink: 0;
+        }
+        .tab-btn.active { background: white; color: var(--primary-color); font-weight: bold; }
+        .tab-date { font-size: 10px; margin-bottom: 2px; }
+        .tab-day { font-size: 16px; }
+
+        .content { padding: 20px; min-height: 300px; }
+        .timeline-item { position: relative; padding-left: 30px; margin-bottom: 20px; }
+        .timeline-item::before {
+            content: ''; position: absolute; left: 7px; top: 15px; bottom: -25px; width: 2px; background: #D1D1D6;
+        }
+        .timeline-item:last-child::before { display: none; }
+        .timeline-item::after {
+            content: ''; position: absolute; left: 0; top: 15px; width: 16px; height: 16px;
+            background: var(--primary-color); border-radius: 50%; border: 3px solid #fff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .card {
+            background: var(--card-bg); border-radius: 16px; padding: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05); 
+            display: flex; flex-direction: column; gap: 10px; /* 改為垂直排列以容納 Memo */
+            position: relative;
+        }
+        .card-main { display: flex; align-items: flex-start; gap: 15px; width: 100%; }
+
+        .time-box { text-align: center; min-width: 50px; }
+        .time-box .ampm { font-size: 10px; color: #8E8E93; }
+        .time-box .time { font-size: 16px; font-weight: 700; color: #333; }
+        
+        .info-box { flex: 1; min-width: 0; }
+        .info-title { font-size: 16px; font-weight: 600; color: #000; margin-bottom: 4px; line-height: 1.4; }
+        .loc-wrapper { display: flex; align-items: center; gap: 8px; flex-wrap: wrap;}
+        .info-loc { font-size: 12px; color: #8E8E93; display: flex; align-items: center; gap: 4px; }
+        .info-note { font-size: 12px; color: #FF9500; margin-top: 4px; line-height: 1.3; }
+        
+        /* 導航按鈕 */
+        .map-link {
+            display: inline-flex; align-items: center; gap: 3px;
+            background: rgba(0, 122, 255, 0.1); color: var(--link-color);
+            padding: 2px 8px; border-radius: 6px; font-size: 11px;
+            text-decoration: none; font-weight: 600; white-space: nowrap;
+        }
+
+        /* --- 新增功能：Memo 備忘錄 --- */
+        .memo-section {
+            width: 100%;
+            background: #FFF9E6; /* 淡黃色便條紙感 */
+            padding: 10px; border-radius: 8px;
+            border-left: 3px solid #FFCC00;
+            font-size: 13px; color: #555; line-height: 1.5;
+            display: none; /* 預設隱藏，有內容才顯示 */
+            margin-top: 5px;
+            white-space: pre-wrap; /* 保留換行 */
+        }
+        .memo-section.show { display: block; }
+        
+        /* Memo 控制按鈕 (僅編輯模式顯示) */
+        .memo-controls { display: none; gap: 10px; margin-top: 5px; font-size: 12px; }
+        .add-memo-btn { color: var(--link-color); cursor: pointer; border: 1px dashed var(--link-color); padding: 4px 8px; border-radius: 4px; display: inline-block;}
+        .del-memo-btn { color: var(--danger-color); cursor: pointer; display: inline-block; margin-left: auto;}
+        
+        body.is-editing .memo-controls { display: flex; }
+        body.is-editing .memo-section { display: block !important; min-height: 40px; border: 1px dashed #ccc; background: #fff;} /* 編輯時強制顯示 */
+
+        /* --- 檢查清單樣式 (Checklist) --- */
+        .checklist-container { padding: 20px; }
+        .checklist-category { margin-bottom: 25px; background: white; border-radius: 16px; padding: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .cat-title { font-size: 18px; font-weight: 700; color: var(--primary-color); margin-bottom: 10px; border-bottom: 2px solid #f0f0f0; padding-bottom: 5px; display: flex; justify-content: space-between; align-items: center;}
+        
+        .check-item { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid #f9f9f9; }
+        .check-item:last-child { border-bottom: none; }
+        
+        /* 自定義 Checkbox */
+        .custom-checkbox {
+            width: 22px; height: 22px; border: 2px solid #ddd; border-radius: 6px;
+            display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; flex-shrink: 0;
+        }
+        .custom-checkbox i { color: white; font-size: 12px; display: none; }
+        .check-item.checked .custom-checkbox { background: var(--success-color); border-color: var(--success-color); }
+        .check-item.checked .custom-checkbox i { display: block; }
+        .check-item.checked .item-text { text-decoration: line-through; color: #ccc; }
+        .item-text { flex: 1; font-size: 15px; }
+
+        /* 清單編輯功能 */
+        .del-check-btn { color: var(--danger-color); font-size: 14px; padding: 5px; display: none; }
+        .add-check-row { display: none; text-align: center; margin-top: 10px; padding-top: 10px; border-top: 1px dashed #eee; }
+        .add-check-btn { color: var(--link-color); font-size: 14px; cursor: pointer; }
+        
+        body.is-editing .del-check-btn { display: block; }
+        body.is-editing .add-check-row { display: block; }
+        body.is-editing .item-text { border-bottom: 1px dashed #ccc; background: rgba(0,0,0,0.02); padding: 2px; }
+
+        /* --- 底部導航列 --- */
+        .bottom-nav {
+            position: fixed; bottom: 0; left: 0; width: 100%; height: 60px;
+            background: rgba(255,255,255,0.95); backdrop-filter: blur(10px);
+            border-top: 1px solid #e0e0e0;
+            display: flex; justify-content: space-around; align-items: center;
+            z-index: 900;
+        }
+        .nav-item {
+            flex: 1; text-align: center; color: var(--text-gray); cursor: pointer;
+            display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
+        }
+        .nav-item i { font-size: 20px; }
+        .nav-item span { font-size: 10px; font-weight: 500; }
+        .nav-item.active { color: var(--primary-color); }
+
+        /* --- 通用編輯樣式 --- */
+        body.is-editing .time, body.is-editing .info-title, body.is-editing .info-loc, body.is-editing .info-note, body.is-editing .ampm {
+            border-bottom: 1px dashed #ccc; background: rgba(0,0,0,0.02) !important; padding: 2px;
+        }
+        body.is-editing .map-link { display: none; }
+        .delete-btn {
+            position: absolute; right: -10px; top: -10px;
+            background: var(--danger-color); color: white; width: 24px; height: 24px;
+            border-radius: 50%; display: none; justify-content: center; align-items: center;
+            cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.2); z-index: 10;
+        }
+        body.is-editing .delete-btn { display: flex; }
+        .add-btn-container { text-align: center; margin-top: 20px; display: none; }
+        body.is-editing .add-btn-container { display: block; }
+        .add-btn {
+            background: var(--primary-color); color: white; border: none;
+            padding: 10px 20px; border-radius: 20px; font-size: 14px;
+            box-shadow: 0 4px 10px rgba(88, 86, 214, 0.3);
+        }
+        #save-toast {
+            position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%);
+            background: rgba(0,0,0,0.8); color: white; padding: 10px 20px;
+            border-radius: 30px; font-size: 12px; opacity: 0; pointer-events: none; transition: 0.3s; z-index: 1000;
+        }
+        #save-toast.show { opacity: 1; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div class="header-top">
+            <div class="trip-title" contenteditable="false">🇯🇵 名古屋・白川鄉</div>
+            <button class="edit-toggle" onclick="toggleEditMode()">
+                <i class="fas fa-pen"></i> <span id="editBtnText">編輯</span>
+            </button>
+        </div>
+        
+        <div id="itinerary-tabs" class="tabs">
+            <button class="tab-btn active" onclick="switchDay('d1', this)"><span class="tab-date">週四</span><span class="tab-day">D1</span></button>
+            <button class="tab-btn" onclick="switchDay('d2', this)"><span class="tab-date">週五</span><span class="tab-day">D2</span></button>
+            <button class="tab-btn" onclick="switchDay('d3', this)"><span class="tab-date">週六</span><span class="tab-day">D3</span></button>
+            <button class="tab-btn" onclick="switchDay('d4', this)"><span class="tab-date">週日</span><span class="tab-day">D4</span></button>
+            <button class="tab-btn" onclick="switchDay('d5', this)"><span class="tab-date">週一</span><span class="tab-day">D5</span></button>
+            <button class="tab-btn" onclick="switchDay('d6', this)"><span class="tab-date">週二</span><span class="tab-day">D6</span></button>
+        </div>
+        
+        <div id="checklist-header" style="display:none; color:white; font-size:14px; opacity:0.9;">
+            出發前記得檢查行李喔！🎒
+        </div>
+    </div>
+
+    <div id="view-itinerary" class="page-view active">
+        <div class="content" id="schedule-container"></div>
+        <div class="add-btn-container"><button class="add-btn" onclick="addNewItem()"><i class="fas fa-plus"></i> 新增行程</button></div>
+    </div>
+
+    <div id="view-checklist" class="page-view">
+        <div class="checklist-container" id="checklist-container">
+            </div>
+    </div>
+
+    <div id="save-toast"><i class="fas fa-check"></i> 已自動儲存</div>
+
+    <div class="bottom-nav">
+        <div class="nav-item active" onclick="switchPage('itinerary', this)">
+            <i class="fas fa-map-marked-alt"></i>
+            <span>行程</span>
+        </div>
+        <div class="nav-item" onclick="switchPage('checklist', this)">
+            <i class="fas fa-clipboard-check"></i>
+            <span>清單</span>
+        </div>
+    </div>
+
+    <script>
+        // --- 1. 資料結構初始化 ---
+        const defaultData = {
+            // 行程資料 (保留 V4 的資料)
+            itinerary: {
+                d1: [
+                    { id: 101, ampm: "上午", time: "11:00", title: "抵達桃園機場", loc: "桃園機場第一航廈", note: "準備 Check-in", memo: "記得帶護照，隨身電源放背包" },
+                    { id: 102, ampm: "下午", time: "15:00", title: "飛往中部國際空港", loc: "中部國際空港", note: "18:30 抵達" },
+                    { id: 103, ampm: "晚上", time: "20:00", title: "飯店 Check-in", loc: "BASE LAYER Hotel", note: "放行李、休息" }
+                ],
+                d2: [
+                    { id: 201, ampm: "上午", time: "07:30", title: "JR 飛驒號列車", loc: "名古屋車站", note: "車程約 2.5 小時" },
+                    { id: 203, ampm: "中午", time: "11:45", title: "白川鄉 合掌村", loc: "白川鄉合掌村", note: "午餐 & 觀光至 18:00" }
+                ],
+                d3: [], d4: [], d5: [], d6: [] // 為節省篇幅，其他天若為空會自動產生
+            },
+            // 檢查清單資料
+            checklist: [
+                {
+                    category: "必備證件 & 錢包",
+                    items: [
+                        { text: "護照 (效期6個月以上)", checked: false },
+                        { text: "VJW 入境截圖 / QR code", checked: false },
+                        { text: "日幣現金 / 信用卡", checked: false },
+                        { text: "機票 / 訂房確認單", checked: false }
+                    ]
+                },
+                {
+                    category: "衣物 & 穿戴",
+                    items: [
+                        { text: "換洗衣物 (5天份)", checked: false },
+                        { text: "發熱衣 / 羽絨外套", checked: false },
+                        { text: "好走的鞋子", checked: false }
+                    ]
+                },
+                {
+                    category: "電子產品",
+                    items: [
+                        { text: "手機 / 充電線", checked: false },
+                        { text: "行動電源 (需隨身帶)", checked: false },
+                        { text: "網卡 / Wi-Fi 機", checked: false },
+                        { text: "轉接頭 (日本雙孔)", checked: false }
+                    ]
+                },
+                {
+                    category: "藥品 & 雜物",
+                    items: [
+                        { text: "常備藥 (感冒/腸胃)", checked: false },
+                        { text: "摺疊傘", checked: false },
+                        { text: "牙刷 / 盥洗用品", checked: false }
+                    ]
+                }
+            ]
+        };
+
+        // 補足 V4 資料 (若您使用舊資料)
+        const fullDefaultData = JSON.parse(JSON.stringify(defaultData)); 
+        // 這裡可以把您上一版完整的行程貼進去 itinerary 區塊，為了代碼簡潔我只放部分範例
+
+        let currentDay = 'd1';
+        let isEditing = false;
+        let appData = {};
+
+        // --- 2. 初始化 ---
+        window.onload = function() { 
+            loadData(); 
+            renderSchedule(); 
+            renderChecklist();
+        };
+
+        // 防止貼上格式跑版
+        document.addEventListener('paste', function (e) {
+            if (e.target.isContentEditable) {
+                e.preventDefault();
+                const text = (e.clipboardData || window.clipboardData).getData('text');
+                document.execCommand('insertText', false, text);
+            }
+        });
+
+        function loadData() {
+            const saved = localStorage.getItem('myTripData_v5');
+            if (saved) {
+                appData = JSON.parse(saved);
+                // 相容性檢查：如果舊資料沒有 checklist，補上去
+                if (!appData.checklist) appData.checklist = defaultData.checklist;
+                if (!appData.itinerary) {
+                     // 可能是 V4 格式，轉換一下
+                     const oldData = JSON.parse(saved);
+                     appData = { itinerary: oldData, checklist: defaultData.checklist };
+                }
+            } else {
+                appData = JSON.parse(JSON.stringify(defaultData));
+            }
+        }
+
+        function saveData() {
+            localStorage.setItem('myTripData_v5', JSON.stringify(appData));
+            showToast();
+        }
+
+        // --- 3. 頁面切換 ---
+        function switchPage(pageName, navBtn) {
+            // 切換 Nav 樣式
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            navBtn.classList.add('active');
+
+            // 切換頁面內容
+            document.querySelectorAll('.page-view').forEach(el => el.classList.remove('active'));
+            document.getElementById('view-' + pageName).classList.add('active');
+
+            // 切換 Header 顯示
+            if(pageName === 'itinerary') {
+                document.getElementById('itinerary-tabs').style.display = 'flex';
+                document.getElementById('checklist-header').style.display = 'none';
+            } else {
+                document.getElementById('itinerary-tabs').style.display = 'none';
+                document.getElementById('checklist-header').style.display = 'block';
+            }
+        }
+
+        // --- 4. 行程表渲染 (含 Memo) ---
+        function renderSchedule() {
+            const container = document.getElementById('schedule-container');
+            container.innerHTML = '';
+            // 確保 itinerary 物件存在
+            if (!appData.itinerary) appData.itinerary = {};
+            const dayList = appData.itinerary[currentDay] || [];
+
+            dayList.forEach((item, index) => {
+                let cleanLoc = item.loc ? item.loc.replace(/📍|🚗|🚄|✈️/g, '').trim() : "";
+                let mapUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(cleanLoc)}`;
+                
+                // Memo 顯示邏輯：有內容顯示，或者是編輯模式下顯示
+                let memoContent = item.memo || "";
+                let hasMemo = memoContent.length > 0;
+                let memoDisplayClass = hasMemo ? "show" : "";
+
+                const div = document.createElement('div');
+                div.className = 'timeline-item';
+                div.innerHTML = `
+                    <div class="card">
+                        <div class="delete-btn" onclick="deleteItem(${index})"><i class="fas fa-times"></i></div>
+                        <div class="card-main">
+                            <div class="time-box">
+                                <div class="ampm" onblur="updateItinerary(${index}, 'ampm', this.innerText)">${item.ampm}</div>
+                                <div class="time" onblur="updateItinerary(${index}, 'time', this.innerText)">${item.time}</div>
+                            </div>
+                            <div class="info-box">
+                                <div class="info-title" onblur="updateItinerary(${index}, 'title', this.innerText)">${item.title}</div>
+                                <div class="loc-wrapper">
+                                    <div class="info-loc" onblur="updateItinerary(${index}, 'loc', this.innerText)">${item.loc}</div>
+                                    <a href="${mapUrl}" target="_blank" class="map-link"><i class="fas fa-location-arrow"></i> 導航</a>
+                                </div>
+                                <div class="info-note" onblur="updateItinerary(${index}, 'note', this.innerText)">${item.note}</div>
+                            </div>
+                        </div>
+
+                        <div class="memo-wrapper">
+                            <div class="memo-controls">
+                                ${!hasMemo ? `<div class="add-memo-btn" onclick="toggleMemo(${index}, true)">+ 新增備忘錄</div>` : ''}
+                                ${hasMemo ? `<div class="del-memo-btn" onclick="toggleMemo(${index}, false)"><i class="fas fa-trash"></i> 刪除備忘</div>` : ''}
+                            </div>
+                            <div class="memo-section ${memoDisplayClass}" onblur="updateItinerary(${index}, 'memo', this.innerText)">${memoContent}</div>
+                        </div>
+                    </div>`;
+                container.appendChild(div);
+            });
+            setEditable(isEditing);
+        }
+
+        function updateItinerary(index, key, value) {
+            if (!appData.itinerary[currentDay][index]) return;
+            appData.itinerary[currentDay][index][key] = value.trim();
+            saveData();
+        }
+
+        function toggleMemo(index, show) {
+            if (!appData.itinerary[currentDay][index]) return;
+            if (show) {
+                appData.itinerary[currentDay][index].memo = "請輸入備忘事項...";
+            } else {
+                appData.itinerary[currentDay][index].memo = "";
+            }
+            saveData();
+            renderSchedule();
+        }
+
+        // --- 5. 檢查清單渲染 ---
+        function renderChecklist() {
+            const container = document.getElementById('checklist-container');
+            container.innerHTML = '';
+            
+            appData.checklist.forEach((cat, catIndex) => {
+                const catDiv = document.createElement('div');
+                catDiv.className = 'checklist-category';
+                
+                let itemsHtml = '';
+                cat.items.forEach((item, itemIndex) => {
+                    itemsHtml += `
+                        <div class="check-item ${item.checked ? 'checked' : ''}">
+                            <div class="custom-checkbox" onclick="toggleCheck(${catIndex}, ${itemIndex})">
+                                <i class="fas fa-check"></i>
+                            </div>
+                            <div class="item-text" onblur="updateCheckItem(${catIndex}, ${itemIndex}, this.innerText)">${item.text}</div>
+                            <div class="del-check-btn" onclick="deleteCheckItem(${catIndex}, ${itemIndex})"><i class="fas fa-minus-circle"></i></div>
+                        </div>
+                    `;
+                });
+
+                catDiv.innerHTML = `
+                    <div class="cat-title">
+                        <span onblur="updateCatTitle(${catIndex}, this.innerText)">${cat.category}</span>
+                    </div>
+                    <div class="cat-items">${itemsHtml}</div>
+                    <div class="add-check-row">
+                        <div class="add-check-btn" onclick="addCheckItem(${catIndex})">+ 新增項目</div>
+                    </div>
+                `;
+                container.appendChild(catDiv);
+            });
+            setEditable(isEditing);
+        }
+
+        function toggleCheck(catIndex, itemIndex) {
+            if(isEditing) return; // 編輯模式下不給打勾，避免誤觸
+            appData.checklist[catIndex].items[itemIndex].checked = !appData.checklist[catIndex].items[itemIndex].checked;
+            saveData();
+            renderChecklist();
+        }
+        
+        function updateCheckItem(catIndex, itemIndex, value) {
+            appData.checklist[catIndex].items[itemIndex].text = value.trim();
+            saveData();
+        }
+
+        function addCheckItem(catIndex) {
+            appData.checklist[catIndex].items.push({ text: "新項目", checked: false });
+            saveData();
+            renderChecklist();
+        }
+
+        function deleteCheckItem(catIndex, itemIndex) {
+            if(confirm('刪除此項目？')) {
+                appData.checklist[catIndex].items.splice(itemIndex, 1);
+                saveData();
+                renderChecklist();
+            }
+        }
+
+        // --- 6. 通用功能 ---
+        function switchDay(dayId, btn) {
+            currentDay = dayId;
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+            btn.classList.add('active');
+            renderSchedule();
+        }
+
+        function toggleEditMode() {
+            isEditing = !isEditing;
+            const btnText = document.getElementById('editBtnText');
+            const toggleBtn = document.querySelector('.edit-toggle');
+            document.body.classList.toggle('is-editing', isEditing);
+            toggleBtn.classList.toggle('editing', isEditing);
+            btnText.innerText = isEditing ? '完成' : '編輯';
+            setEditable(isEditing);
+            // 重新渲染以顯示編輯按鈕
+            renderSchedule(); 
+            renderChecklist();
+        }
+
+        function setEditable(editable) {
+            // 行程表欄位
+            document.querySelectorAll('.time, .info-title, .info-loc, .info-note, .ampm, .memo-section').forEach(field => {
+                field.contentEditable = editable;
+            });
+            // 清單欄位
+            document.querySelectorAll('.item-text, .cat-title span').forEach(field => {
+                field.contentEditable = editable;
+            });
+        }
+
+        function addNewItem() {
+            if (!appData.itinerary[currentDay]) appData.itinerary[currentDay] = [];
+            appData.itinerary[currentDay].push({ id: Date.now(), ampm: "時段", time: "00:00", title: "新行程", loc: "地點", note: "備註", memo: "" });
+            saveData(); renderSchedule();
+        }
+
+        function deleteItem(index) {
+            if(confirm('確定刪除？')) {
+                appData.itinerary[currentDay].splice(index, 1);
+                saveData(); renderSchedule();
+            }
+        }
+
+        function showToast() {
+            const toast = document.getElementById('save-toast');
+            toast.classList.add('show');
+            setTimeout(() => { toast.classList.remove('show'); }, 2000);
+        }
+    </script>
+</body>
+</html>
