@@ -40,14 +40,12 @@
         .trip-title { font-size: 22px; font-weight: 800; letter-spacing: 0.5px; line-height: 1.2; border-bottom: 1px dashed transparent; }
         .trip-subtitle { font-size: 13px; opacity: 0.8; margin-top: 4px; font-weight: 500; border-bottom: 1px dashed transparent; display: inline-block; cursor: pointer;}
         
-        /* Controls */
-        .controls { display: flex; gap: 6px; } /* 縮小間距以容納更多按鈕 */
+        .controls { display: flex; gap: 6px; }
         .view-btn { width: 34px; height: 34px; border-radius: 10px; border: none; background: rgba(255,255,255,0.2); color: rgba(255,255,255,0.8); display: flex; align-items: center; justify-content: center; font-size: 15px; cursor: pointer; transition: 0.2s; }
         .view-btn.active { background: white; color: var(--primary-color); font-weight: bold; box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
         .edit-toggle { height: 34px; padding: 0 10px; border-radius: 10px; border: none; background: rgba(0,0,0,0.2); color: white; font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 5px; cursor: pointer; }
         .edit-toggle.editing { background: var(--success-color); }
 
-        /* Tabs */
         .tabs-container { padding-bottom: 15px; overflow: hidden; }
         .tabs { display: flex; overflow-x: auto; gap: 10px; scrollbar-width: none; padding: 4px; }
         .tabs::-webkit-scrollbar { display: none; }
@@ -59,11 +57,10 @@
         .sub-tab-btn { background: rgba(0,0,0,0.2); color: rgba(255,255,255,0.8); border: none; padding: 8px 20px; border-radius: 20px; font-size: 14px; font-weight: 600; cursor: pointer; }
         .sub-tab-btn.active { background: white; color: var(--primary-color); }
 
-        /* Content Views */
         .content { padding: 10px 20px; min-height: 300px; display: none; }
         .content.active { display: block; animation: fadeIn 0.3s; }
 
-        /* Timeline Styles */
+        /* Timeline */
         .timeline-item { position: relative; padding-left: 20px; margin-bottom: 20px; }
         .timeline-item::before { content: ''; position: absolute; left: 9px; top: 25px; bottom: -45px; width: 2px; background: var(--line-color); }
         .timeline-item:last-child::before { display: none; }
@@ -91,7 +88,7 @@
         .delete-btn { position: absolute; right: -8px; top: -8px; width: 22px; height: 22px; background: var(--danger-color); color: white; border-radius: 50%; display: none; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(0,0,0,0.2); cursor: pointer; z-index: 10; font-size: 12px;}
         body.is-editing .delete-btn { display: flex; }
 
-        /* Checklist Styles */
+        /* Checklist */
         .checklist-container { padding: 10px 20px; }
         .checklist-category { background: white; border-radius: 16px; padding: 15px; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.03); }
         .cat-title { font-weight: 700; color: var(--primary-color); border-bottom: 1px solid #EEE; padding-bottom: 8px; margin-bottom: 8px; display:flex; justify-content:space-between;}
@@ -102,7 +99,7 @@
         .custom-checkbox i { display: none; }
         .check-item.checked .item-text { text-decoration: line-through; color: #CCC; }
 
-        /* --- New Feature: Expense Tracker Styles --- */
+        /* Expense */
         .expense-summary { background: white; padding: 20px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 20px; text-align: center; }
         .total-amount { font-size: 32px; font-weight: 800; color: var(--primary-color); margin: 10px 0; }
         .total-sub { font-size: 13px; color: var(--text-gray); }
@@ -116,16 +113,51 @@
         .exp-select { padding: 10px; border: 1px solid #DDD; border-radius: 12px; background: white; }
         .rate-setting { font-size: 12px; color: #888; text-align: center; margin-bottom: 10px; cursor: pointer; text-decoration: underline;}
 
-        /* --- New Feature: Notes Styles --- */
+        /* --- V17.0 New Notes Grid Styles --- */
+        .notes-grid { 
+            display: grid; 
+            grid-template-columns: 1fr 1fr; /* 兩欄 */
+            gap: 15px; 
+            padding: 5px; 
+            max-height: 60vh; 
+            overflow-y: auto;
+        }
+        .note-card { 
+            background: #FFF9C4; /* 便利貼黃 */
+            border-radius: 12px; 
+            padding: 15px; 
+            min-height: 120px; 
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1); 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: space-between;
+            position: relative;
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+        .note-card:active { transform: scale(0.98); }
+        .note-preview { font-size: 13px; color: #555; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 5; -webkit-box-orient: vertical; line-height: 1.4; white-space: pre-wrap;}
+        .note-date { font-size: 10px; color: #999; margin-top: 10px; text-align: right; }
+        .note-del-btn {
+            position: absolute; top: 5px; right: 5px; width: 20px; height: 20px;
+            background: rgba(0,0,0,0.1); border-radius: 50%; color: white;
+            display: flex; align-items: center; justify-content: center; font-size: 12px;
+            display: none;
+        }
+        .note-card:hover .note-del-btn { display: flex; }
+
+        /* Modal 通用 */
         .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.5); z-index: 3000; display: none; align-items: center; justify-content: center; }
         .modal-overlay.show { display: flex; }
-        .modal-box { background: white; padding: 25px; border-radius: 20px; width: 85%; max-width: 400px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2); max-height: 80vh; display: flex; flex-direction: column;}
+        .modal-box { background: white; padding: 25px; border-radius: 20px; width: 85%; max-width: 400px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2); max-height: 85vh; display: flex; flex-direction: column;}
         .modal-title { font-size: 18px; font-weight: 800; margin-bottom: 15px; color: var(--text-dark); display: flex; justify-content: space-between; align-items: center;}
-        .notes-area { width: 100%; height: 300px; border: 1px solid #EEE; border-radius: 10px; padding: 15px; font-size: 14px; line-height: 1.6; resize: none; box-sizing: border-box; font-family: inherit;}
+        
+        /* Note Editor Modal Specific */
+        .note-editor-area { width: 100%; flex: 1; min-height: 300px; border: 1px solid #EEE; border-radius: 10px; padding: 15px; font-size: 15px; line-height: 1.6; resize: none; box-sizing: border-box; font-family: inherit; background: #FFFDF0;}
         .modal-btn { width: 100%; padding: 12px; border: none; border-radius: 12px; font-weight: 600; cursor: pointer; margin-top: 15px; background: var(--primary-color); color: white;}
         .close-icon { cursor: pointer; color: #999; font-size: 20px;}
 
-        /* Edit Mode & Helpers */
+        /* Edit Helpers */
         body.is-editing .info-title, body.is-editing .info-loc span, body.is-editing .info-note, body.is-editing .time { border-bottom: 1px dashed #CCC; background: rgba(0,0,0,0.02); min-width: 20px; }
         .del-check-btn, .del-cat-btn, .add-check-row, .add-cat-btn, .add-btn-container { display: none; }
         body.is-editing .del-check-btn, body.is-editing .del-cat-btn, body.is-editing .add-check-row, body.is-editing .add-cat-btn, body.is-editing .add-btn-container { display: block; }
@@ -151,7 +183,7 @@
                 <button id="btn-view-itinerary" class="view-btn active" onclick="switchView('itinerary')"><i class="far fa-calendar-alt"></i></button>
                 <button id="btn-view-checklist" class="view-btn" onclick="switchView('checklist')"><i class="fas fa-tasks"></i></button>
                 <button id="btn-view-expenses" class="view-btn" onclick="switchView('expenses')"><i class="fas fa-yen-sign"></i></button>
-                <button id="btn-open-notes" class="view-btn" onclick="openNotes()"><i class="fas fa-sticky-note"></i></button>
+                <button id="btn-open-notes" class="view-btn" onclick="openNotesList()"><i class="fas fa-sticky-note"></i></button>
                 <button class="edit-toggle" onclick="toggleEditMode()"><i class="fas fa-pen"></i></button>
             </div>
         </div>
@@ -190,29 +222,35 @@
             <div class="total-amount" id="total-twd">NT$ 0</div>
             <div class="rate-setting" onclick="updateExchangeRate()">目前匯率: <span id="current-rate">0.22</span> (點擊修改)</div>
         </div>
-        
         <div class="expense-input-row">
             <input type="text" id="exp-name" class="exp-input" placeholder="項目 (如: 晚餐)">
             <input type="number" id="exp-amount" class="exp-input" placeholder="金額" style="width:80px;">
-            <select id="exp-curr" class="exp-select">
-                <option value="JPY">JPY</option>
-                <option value="TWD">TWD</option>
-            </select>
+            <select id="exp-curr" class="exp-select"><option value="JPY">JPY</option><option value="TWD">TWD</option></select>
             <button class="add-btn" style="margin-top:0;" onclick="addExpense()">＋</button>
         </div>
-
-        <div id="expenses-list">
-            </div>
+        <div id="expenses-list"></div>
     </div>
 
-    <div id="notes-modal" class="modal-overlay">
+    <div id="notes-list-modal" class="modal-overlay">
         <div class="modal-box">
             <div class="modal-title">
                 <span>📝 隨身筆記</span>
-                <span class="close-icon" onclick="closeNotes()">×</span>
+                <span class="close-icon" onclick="closeNotesList()">×</span>
             </div>
-            <textarea id="notes-area" class="notes-area" placeholder="貼上您的訂房代號、航班資訊、備註..." onblur="saveNotes()"></textarea>
-            <button class="modal-btn" onclick="closeNotes()">關閉</button>
+            <div id="notes-grid-container" class="notes-grid">
+                </div>
+            <button class="modal-btn" onclick="createNewNote()">＋ 新增筆記</button>
+        </div>
+    </div>
+
+    <div id="note-editor-modal" class="modal-overlay" style="z-index: 3100;">
+        <div class="modal-box">
+            <div class="modal-title">
+                <span>編輯筆記</span>
+                <span class="close-icon" onclick="closeNoteEditor()">×</span>
+            </div>
+            <textarea id="current-note-input" class="note-editor-area" placeholder="輸入內容..."></textarea>
+            <button class="modal-btn" onclick="saveAndCloseNoteEditor()">儲存並返回</button>
         </div>
     </div>
 
@@ -236,59 +274,15 @@
 
         const defaultData = {
             meta: { title: "🇯🇵 名古屋・白川鄉", subtitle: "DEC 05 - DEC 09, 2025", rate: 0.22 },
-            notes: "", // 筆記資料
-            expenses: [], // 記帳資料
+            notes: null, // Legacy field (deprecated)
+            notesList: [], // New: Array of note objects
+            expenses: [], 
             itinerary: {
-                d1: [
-                    { id: 101, time: "11:00", type: "✈️ 飛行", title: "抵達桃園機場", loc: "桃園機場第一航廈", note: "準備 Check-in", memo: "" },
-                    { id: 102, time: "15:00", type: "✈️ 飛行", title: "飛往中部國際空港", loc: "中部國際空港", note: "18:30 抵達", memo: "" },
-                    { id: 103, time: "18:30", type: "🚄 交通", title: "從中部國際空港 到 飯店", loc: "名古屋市區", note: "交通移動", memo: "" },
-                    { id: 104, time: "20:00", type: "🏨 住宿", title: "飯店 Check-in", loc: "BASE LAYER Hotel", note: "放行李、休息", memo: "" },
-                    { id: 105, time: "20:45", type: "🍴 用餐", title: "晚餐 / 自由時間", loc: "飯店附近", note: "", memo: "" }
-                ],
-                d2: [
-                    { id: 201, time: "07:00", type: "🏨 住宿", title: "退房", loc: "BASE LAYER Hotel", note: "", memo: "" },
-                    { id: 202, time: "07:30", type: "🚄 交通", title: "JR 飛驒特急列車", loc: "名古屋 -> 高山市", note: "車程約 2.5 小時", memo: "" },
-                    { id: 203, time: "09:30", type: "🚗 交通", title: "租車", loc: "高山市", note: "自駕前往白川鄉", memo: "" },
-                    { id: 204, time: "10:00", type: "🚗 交通", title: "車程", loc: "往白川鄉", note: "", memo: "" },
-                    { id: 205, time: "11:00", type: "🍴 用餐", title: "中餐", loc: "白川鄉", note: "", memo: "" },
-                    { id: 206, time: "11:45", type: "🎡 景點", title: "白川鄉 合掌村", loc: "白川鄉合掌村", note: "觀光至 18:00", memo: "" },
-                    { id: 207, time: "18:00", type: "🏨 住宿", title: "飯店 Check-in", loc: "高山地區飯店", note: "", memo: "" },
-                    { id: 208, time: "18:30", type: "🍴 用餐", title: "自由時間 / 晚餐", loc: "高山老街周邊", note: "", memo: "" }
-                ],
-                d3: [
-                    { id: 301, time: "09:00", type: "🏨 住宿", title: "退房", loc: "高山飯店", note: "", memo: "" },
-                    { id: 302, time: "09:30", type: "🚗 交通", title: "車程", loc: "前往老街", note: "", memo: "" },
-                    { id: 303, time: "10:30", type: "🎡 景點", title: "飛驒高山老街", loc: "上三之町", note: "逛街、吃飛驒牛壽司", memo: "" },
-                    { id: 304, time: "17:00", type: "🚗 交通", title: "還車", loc: "高山租車點", note: "", memo: "" },
-                    { id: 305, time: "17:30", type: "🚄 交通", title: "JR 飛驒特急列車", loc: "高山 -> 名古屋", note: "返回市區", memo: "" },
-                    { id: 306, time: "19:30", type: "🏨 住宿", title: "飯店 Check-in", loc: "名古屋市區飯店", note: "", memo: "" },
-                    { id: 307, time: "20:00", type: "🛍️ 購物", title: "自由時間", loc: "名古屋車站周邊", note: "", memo: "" }
-                ],
-                d4: [
-                    { id: 401, time: "08:15", type: "🎡 景點", title: "名古屋城", loc: "名古屋城", note: "參觀至 10:15", memo: "" },
-                    { id: 402, time: "10:15", type: "🍴 用餐", title: "金鯱橫丁", loc: "名古屋城旁", note: "美食街午餐", memo: "" },
-                    { id: 403, time: "11:30", type: "🛍️ 購物", title: "榮町 -> 矢場町", loc: "榮町商圈", note: "逛街購物", memo: "" },
-                    { id: 404, time: "12:30", type: "🍴 用餐", title: "午餐", loc: "榮町", note: "", memo: "" },
-                    { id: 405, time: "14:45", type: "🛍️ 購物", title: "寶可夢中心 名古屋店", loc: "Pokemon Center Nagoya", note: "松坂屋", memo: "" },
-                    { id: 406, time: "15:30", type: "🎡 景點", title: "三輪神社", loc: "三輪神社", note: "兔子神社", memo: "" },
-                    { id: 407, time: "17:30", type: "🛍️ 購物", title: "大須商店街", loc: "大須商店街", note: "逛街吃晚餐", memo: "" },
-                    { id: 408, time: "19:45", type: "🎡 景點", title: "中部電力 MIRAI TOWER", loc: "久屋大通公園", note: "看夜景", memo: "" }
-                ],
-                d5: [
-                    { id: 501, time: "08:00", type: "🛍️ 購物", title: "JR 中央大廈", loc: "JR Central Towers", note: "全日行程 / 購物", memo: "" },
-                    { id: 502, time: "20:00", type: "🛍️ 購物", title: "自由時間", loc: "市區", note: "整理行李", memo: "" }
-                ],
-                d6: [
-                    { id: 601, time: "08:30", type: "🏨 住宿", title: "退房", loc: "名古屋", note: "", memo: "" },
-                    { id: 602, time: "14:30", type: "🚄 交通", title: "前往機場 / 報到", loc: "中部國際空港", note: "", memo: "" },
-                    { id: 603, time: "16:00", type: "🛍️ 購物", title: "抵達機場 / 最後採買", loc: "中部國際空港 T1", note: "", memo: "" },
-                    { id: 604, time: "19:30", type: "✈️ 飛行", title: "搭機返台", loc: "飛行中", note: "預計 22:15 抵達桃園", memo: "" },
-                    { id: 605, time: "22:15", type: "🏠 返家", title: "抵達桃園機場", loc: "桃園機場", note: "平安回家", memo: "" }
-                ]
+                d1: [{ id: 101, time: "11:00", type: "✈️ 飛行", title: "抵達桃園機場", loc: "桃園機場第一航廈", note: "準備 Check-in", memo: "" }],
+                d2: [], d3: [], d4: [], d5: [], d6: []
             },
-            checklist_pre: [{ category: "必備證件", items: [{ text: "護照 (效期6個月以上)", checked: false }, { text: "VJW 入境截圖", checked: false }, { text: "日幣 / 信用卡", checked: false }] }],
-            checklist_tour: [{ category: "必買伴手禮", items: [{ text: "蝦餅", checked: false }, { text: "合掌村磁鐵", checked: false }] }],
+            checklist_pre: [{ category: "必備證件", items: [{ text: "護照", checked: false }] }],
+            checklist_tour: [{ category: "必買", items: [{ text: "藥妝", checked: false }] }],
             activityTypes: ["✈️ 飛行", "🚄 交通", "🎡 景點", "🍴 用餐", "🏨 住宿", "🛍️ 購物", "🚗 交通", "🏠 返家"]
         };
 
@@ -297,6 +291,7 @@
         let isEditing = false;
         let appData = JSON.parse(JSON.stringify(defaultData));
         let sortableInstance = null;
+        let currentEditingNoteId = null;
 
         window.onload = function() { initRealtimeSync(); };
 
@@ -305,20 +300,31 @@
             tripDocRef.onSnapshot((doc) => {
                 if (doc.exists) {
                     const remoteData = doc.data();
-                    // 在編輯模式下不強制重新渲染以免打斷輸入，除非是第一次載入
                     if (!isEditing || !appData.itinerary) {
                         appData = remoteData;
-                        // 確保新欄位存在 (Data Migration)
-                        if(!appData.notes) appData.notes = "";
+                        // Data Migration & Safety Checks
                         if(!appData.expenses) appData.expenses = [];
                         if(!appData.meta.rate) appData.meta.rate = 0.22;
                         
+                        // ★ 筆記資料遷移邏輯 (重要) ★
+                        if(typeof appData.notes === 'string' && appData.notes.trim() !== "") {
+                            if(!appData.notesList) appData.notesList = [];
+                            // 把舊的單一文字筆記，轉成第一張卡片
+                            appData.notesList.push({ id: Date.now(), content: appData.notes, date: new Date().toLocaleDateString() });
+                            appData.notes = null; // 清空舊欄位
+                            saveDataToCloud(true); // 立即存檔更新結構
+                        }
+                        if(!appData.notesList) appData.notesList = []; // 初始化陣列
+
                         document.querySelector('.trip-title').innerText = appData.meta.title;
                         document.querySelector('.trip-subtitle').innerText = appData.meta.subtitle;
                         document.getElementById('current-rate').innerText = appData.meta.rate;
-                        document.getElementById('notes-area').value = appData.notes;
                         
                         renderSchedule(); renderChecklist(); renderExpenses();
+                        // 如果筆記列表開著，也要刷新
+                        if(document.getElementById('notes-list-modal').classList.contains('show')) {
+                            renderNotesGrid();
+                        }
                     }
                     showStatus("已同步", false);
                     setTimeout(() => hideStatus(), 2000);
@@ -326,265 +332,188 @@
             }, (error) => { console.error(error); showStatus("同步失敗"); });
         }
 
-        // --- ⚡️ 即時存檔機制 (Debounce) ---
         let saveTimeout;
         function triggerSave() {
             showStatus("儲存中...");
             clearTimeout(saveTimeout);
-            saveTimeout = setTimeout(() => {
-                saveDataToCloud(true);
-            }, 1000); // 停止打字 1 秒後自動上傳
+            saveTimeout = setTimeout(() => { saveDataToCloud(true); }, 1000);
         }
 
         function saveDataToCloud(force = false) {
-            // 現在不管是否 editing，只要觸發就存檔
             showStatus("儲存中...");
             tripDocRef.set(appData)
                 .then(() => { showStatus("已儲存"); setTimeout(() => hideStatus(), 2000); })
                 .catch((e) => showStatus("儲存失敗"));
         }
 
-        // --- 導航切換 ---
         function switchView(view) {
             document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
             document.getElementById('btn-view-' + view).classList.add('active');
-            
             document.querySelectorAll('.content').forEach(c => c.classList.remove('active'));
             document.getElementById('container-' + view).classList.add('active');
             
-            // Tabs 顯示控制
             document.getElementById('tabs-itinerary').style.display = view === 'itinerary' ? 'flex' : 'none';
             document.getElementById('tabs-checklist').style.display = view === 'checklist' ? 'flex' : 'none';
             document.getElementById('tabs-expenses').style.display = view === 'expenses' ? 'flex' : 'none';
         }
 
-        // --- 文字編輯 (標題) ---
+        // --- 📝 筆記新功能 (Grid + Card) ---
+        function openNotesList() {
+            renderNotesGrid();
+            document.getElementById('notes-list-modal').classList.add('show');
+        }
+        function closeNotesList() {
+            document.getElementById('notes-list-modal').classList.remove('show');
+        }
+        
+        function renderNotesGrid() {
+            const container = document.getElementById('notes-grid-container');
+            container.innerHTML = '';
+            
+            if(!appData.notesList || appData.notesList.length === 0) {
+                container.innerHTML = '<div style="grid-column:1/-1; text-align:center; color:#999; padding:20px;">尚無筆記，點擊下方新增</div>';
+                return;
+            }
+
+            appData.notesList.forEach(note => {
+                const div = document.createElement('div');
+                div.className = 'note-card';
+                div.onclick = function(e) { 
+                    // 如果點到刪除鈕就不開編輯
+                    if(e.target.closest('.note-del-btn')) return;
+                    openNoteEditor(note.id); 
+                };
+                
+                // 預覽文字處理
+                let preview = note.content || "(空白筆記)";
+                
+                div.innerHTML = `
+                    <div class="note-del-btn" onclick="deleteNote(${note.id})">×</div>
+                    <div class="note-preview">${preview}</div>
+                    <div class="note-date">${note.date || ""}</div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function createNewNote() {
+            const newId = Date.now();
+            appData.notesList.push({
+                id: newId,
+                content: "",
+                date: new Date().toLocaleDateString()
+            });
+            triggerSave();
+            renderNotesGrid();
+            openNoteEditor(newId); // 直接打開編輯
+        }
+
+        function openNoteEditor(id) {
+            currentEditingNoteId = id;
+            const note = appData.notesList.find(n => n.id === id);
+            if(note) {
+                document.getElementById('current-note-input').value = note.content;
+                document.getElementById('note-editor-modal').classList.add('show');
+            }
+        }
+
+        function saveAndCloseNoteEditor() {
+            if(currentEditingNoteId) {
+                const content = document.getElementById('current-note-input').value;
+                const noteIndex = appData.notesList.findIndex(n => n.id === currentEditingNoteId);
+                if(noteIndex > -1) {
+                    appData.notesList[noteIndex].content = content;
+                    triggerSave();
+                }
+            }
+            document.getElementById('note-editor-modal').classList.remove('show');
+            renderNotesGrid(); // 刷新列表預覽
+        }
+        
+        function closeNoteEditor() {
+             // 關閉時也自動存一下，避免誤觸關閉丟失
+             saveAndCloseNoteEditor();
+        }
+
+        function deleteNote(id) {
+            if(confirm("確定要刪除這張筆記嗎？")) {
+                appData.notesList = appData.notesList.filter(n => n.id !== id);
+                triggerSave();
+                renderNotesGrid();
+            }
+        }
+
+        // --- Other Functions (Kept same as V16) ---
         function updateTitle(val) { appData.meta.title = val.trim(); triggerSave(); }
         function updateSubtitle(val) { appData.meta.subtitle = val.trim(); triggerSave(); }
-
-        // --- 💰 記帳功能 ---
+        
         function addExpense() {
             const name = document.getElementById('exp-name').value;
             const amount = parseFloat(document.getElementById('exp-amount').value);
             const curr = document.getElementById('exp-curr').value;
             if(!name || !amount) { alert("請輸入項目和金額"); return; }
-            
             appData.expenses.push({ id: Date.now(), item: name, amount: amount, curr: curr });
-            document.getElementById('exp-name').value = '';
-            document.getElementById('exp-amount').value = '';
-            renderExpenses();
-            triggerSave();
+            document.getElementById('exp-name').value = ''; document.getElementById('exp-amount').value = '';
+            renderExpenses(); triggerSave();
         }
-
-        function deleteExpense(id) {
-            if(confirm("刪除此筆消費？")) {
-                appData.expenses = appData.expenses.filter(e => e.id !== id);
-                renderExpenses();
-                triggerSave();
-            }
-        }
-
-        function updateExchangeRate() {
-            const newRate = prompt("請輸入 JPY 對 TWD 匯率：", appData.meta.rate);
-            if(newRate && !isNaN(newRate)) {
-                appData.meta.rate = parseFloat(newRate);
-                document.getElementById('current-rate').innerText = appData.meta.rate;
-                renderExpenses();
-                triggerSave();
-            }
-        }
-
+        function deleteExpense(id) { if(confirm("刪除此筆消費？")) { appData.expenses = appData.expenses.filter(e => e.id !== id); renderExpenses(); triggerSave(); } }
+        function updateExchangeRate() { const r = prompt("匯率：", appData.meta.rate); if(r&&!isNaN(r)){ appData.meta.rate=parseFloat(r); document.getElementById('current-rate').innerText=r; renderExpenses(); triggerSave(); } }
         function renderExpenses() {
-            const list = document.getElementById('expenses-list');
-            list.innerHTML = '';
-            let totalTWD = 0;
-            const rate = appData.meta.rate || 0.22;
-
+            const list = document.getElementById('expenses-list'); list.innerHTML = ''; let total = 0; const r = appData.meta.rate || 0.22;
             appData.expenses.forEach(ex => {
-                let displayPrice = ex.curr === 'TWD' ? `NT$ ${ex.amount}` : `¥ ${ex.amount}`;
-                let equivTWD = ex.curr === 'TWD' ? ex.amount : Math.round(ex.amount * rate);
-                totalTWD += equivTWD;
-
-                list.innerHTML += `
-                    <div class="expense-item">
-                        <div class="expense-info">
-                            <div class="expense-name">${ex.item} <span class="expense-currency">${ex.curr}</span></div>
-                        </div>
-                        <div style="text-align:right;">
-                            <div class="expense-price">${displayPrice}</div>
-                            <div style="font-size:11px; color:#999;">≈ NT$ ${equivTWD}</div>
-                        </div>
-                        <div style="margin-left:15px; color:#FF3B30; cursor:pointer;" onclick="deleteExpense(${ex.id})">×</div>
-                    </div>
-                `;
+                let eq = ex.curr === 'TWD' ? ex.amount : Math.round(ex.amount * r); total += eq;
+                list.innerHTML += `<div class="expense-item"><div class="expense-info"><div class="expense-name">${ex.item} <span class="expense-currency">${ex.curr}</span></div></div><div style="text-align:right;"><div class="expense-price">${ex.curr==='TWD'?'NT$':'¥'} ${ex.amount}</div><div style="font-size:11px; color:#999;">≈ NT$ ${eq}</div></div><div style="margin-left:15px; color:#FF3B30; cursor:pointer;" onclick="deleteExpense(${ex.id})">×</div></div>`;
             });
-            document.getElementById('total-twd').innerText = `NT$ ${totalTWD.toLocaleString()}`;
+            document.getElementById('total-twd').innerText = `NT$ ${total.toLocaleString()}`;
         }
 
-        // --- 📝 筆記功能 ---
-        function openNotes() {
-            document.getElementById('notes-modal').classList.add('show');
-            document.getElementById('notes-area').value = appData.notes || "";
-        }
-        function closeNotes() {
-            document.getElementById('notes-modal').classList.remove('show');
-        }
-        function saveNotes() {
-            appData.notes = document.getElementById('notes-area').value;
-            triggerSave();
-        }
-
-        // --- 行程功能 (更新為 triggerSave) ---
-        function getPeriod(timeStr) {
-            if(!timeStr || !timeStr.includes(":")) return "";
-            const h = parseInt(timeStr.split(":")[0]);
-            if (h < 5) return "深夜"; if (h < 11) return "上午"; if (h < 14) return "中午"; if (h < 18) return "下午"; return "晚上";
-        }
-
-        function renderTypeOptions(currentVal) {
-            let opts = `<option value="">選擇類型</option>`;
-            appData.activityTypes.forEach(t => {
-                const sel = t === currentVal ? 'selected' : '';
-                opts += `<option value="${t}" ${sel}>${t}</option>`;
-            });
-            opts += `<option value="ADD_NEW">➕ 新增選項...</option>`;
-            opts += `<option value="DEL_OPTION" style="color:red;">➖ 刪除選項...</option>`;
-            return opts;
-        }
-
-        function renderSchedule() {
-            const container = document.getElementById('schedule-container');
-            container.innerHTML = '';
-            const dayList = appData.itinerary[currentDay] || [];
-
-            dayList.forEach((item, index) => {
-                const period = getPeriod(item.time);
-                let cleanLoc = item.loc ? item.loc.replace(/📍|🚗|🚄|✈️/g, '').trim() : "";
-                let mapUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(cleanLoc)}`;
-                let hasMemo = (item.memo || "").length > 0;
-                let memoClass = hasMemo ? "show" : "";
-                let typeVal = item.type || "";
-                
-                const div = document.createElement('div');
-                div.className = 'timeline-item';
-                div.setAttribute('data-index', index);
-                
-                div.innerHTML = `
-                    <div class="drag-handle"><i class="fas fa-bars"></i></div>
-                    <div class="card">
-                        <div class="delete-btn" onclick="deleteItem(${index})"><i class="fas fa-times"></i></div>
-                        <div class="time-col">
-                            <div class="ampm">${period}</div>
-                            <div class="time" onblur="updateTimeText(${index}, this.innerText)">${item.time}</div>
-                            <div class="type-badge">${typeVal}</div>
-                            <select class="type-select" onchange="updateType(${index}, this.value)">${renderTypeOptions(typeVal)}</select>
-                        </div>
-                        <div class="info-col">
-                            <div class="info-title" onblur="updateItinerary(${index}, 'title', this.innerText)">${item.title}</div>
-                            <div class="info-loc">
-                                <span onblur="updateLoc(${index}, this.innerText)">${item.loc}</span>
-                                <a href="${mapUrl}" target="_blank" class="nav-btn"><i class="fas fa-location-arrow"></i> 導航</a>
-                            </div>
-                            <div class="info-note" onblur="updateItinerary(${index}, 'note', this.innerText)">${item.note}</div>
-                            <div class="memo-box ${memoClass}" onblur="updateItinerary(${index}, 'memo', this.innerText)">${item.memo || ""}</div>
-                            <div class="memo-controls" style="display:none; margin-top:5px; font-size:12px;">
-                                <span onclick="toggleMemo(${index})" style="color:#007AFF; cursor:pointer;">${hasMemo?'刪除備忘':'新增備忘'}</span>
-                            </div>
-                        </div>
-                    </div>
-                `;
-                if(isEditing) div.querySelector('.memo-controls').style.display = 'block';
-                container.appendChild(div);
-            });
-            setEditable(isEditing);
-
-            if (isEditing) {
-                if (sortableInstance) sortableInstance.destroy();
-                sortableInstance = new Sortable(container, {
-                    handle: '.drag-handle', animation: 150,
-                    onEnd: function (evt) {
-                        const list = appData.itinerary[currentDay];
-                        const item = list.splice(evt.oldIndex, 1)[0];
-                        list.splice(evt.newIndex, 0, item);
-                        triggerSave(); // 拖曳後自動存檔
-                    }
-                });
-            }
-        }
-
-        function updateLoc(i, v) { v = v.trim(); if(appData.itinerary[currentDay][i]) { appData.itinerary[currentDay][i].loc = v; renderSchedule(); triggerSave(); } }
-        function updateTimeText(i, val) { val = val.trim(); if(appData.itinerary[currentDay][i]) { appData.itinerary[currentDay][i].time = val; renderSchedule(); triggerSave(); } }
-        function updateItinerary(i, k, v) { if(appData.itinerary[currentDay][i]) { appData.itinerary[currentDay][i][k] = v.trim(); triggerSave(); } }
-        function toggleMemo(i) { const item = appData.itinerary[currentDay][i]; item.memo = item.memo ? "" : "備忘..."; renderSchedule(); triggerSave(); }
+        function getPeriod(t) { if(!t||!t.includes(":"))return""; const h=parseInt(t.split(":")[0]); if(h<5)return"深夜"; if(h<11)return"上午"; if(h<14)return"中午"; if(h<18)return"下午"; return"晚上"; }
+        function renderTypeOptions(v) { let o=`<option value="">選擇類型</option>`; appData.activityTypes.forEach(t=>{o+=`<option value="${t}" ${t===v?'selected':''}>${t}</option>`}); return o+`<option value="ADD_NEW">➕ 新增...</option><option value="DEL_OPTION" style="color:red;">➖ 刪除...</option>`; }
         
-        function updateType(index, val) {
-            if (val === "ADD_NEW") {
-                const newType = prompt("請輸入新標籤 (例如: 🍜 拉麵)：");
-                if (newType && newType.trim()) {
-                    appData.activityTypes.push(newType.trim());
-                    appData.itinerary[currentDay][index].type = newType.trim();
-                    saveDataToCloud(true); renderSchedule();
-                } else { renderSchedule(); }
-            } else if (val === "DEL_OPTION") {
-                const target = prompt("輸入要刪除的標籤名稱：");
-                if (target && appData.activityTypes.includes(target)) {
-                    if(confirm(`刪除「${target}」？`)) {
-                        appData.activityTypes = appData.activityTypes.filter(t => t !== target);
-                        saveDataToCloud(true); renderSchedule();
-                    }
-                } else { renderSchedule(); }
-            } else { 
-                appData.itinerary[currentDay][index].type = val; 
-                triggerSave();
-            }
+        function renderSchedule() {
+            const container = document.getElementById('schedule-container'); container.innerHTML = '';
+            (appData.itinerary[currentDay]||[]).forEach((item, index) => {
+                const div = document.createElement('div'); div.className = 'timeline-item'; div.setAttribute('data-index', index);
+                let mapUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent((item.loc||"").replace(/📍|🚗|🚄|✈️/g,'').trim())}`;
+                let hasMemo = (item.memo||"").length>0;
+                div.innerHTML = `<div class="drag-handle"><i class="fas fa-bars"></i></div><div class="card"><div class="delete-btn" onclick="deleteItem(${index})"><i class="fas fa-times"></i></div><div class="time-col"><div class="ampm">${getPeriod(item.time)}</div><div class="time" onblur="updateTimeText(${index},this.innerText)">${item.time}</div><div class="type-badge">${item.type||""}</div><select class="type-select" onchange="updateType(${index},this.value)">${renderTypeOptions(item.type||"")}</select></div><div class="info-col"><div class="info-title" onblur="updateItinerary(${index},'title',this.innerText)">${item.title}</div><div class="info-loc"><span onblur="updateLoc(${index},this.innerText)">${item.loc}</span><a href="${mapUrl}" target="_blank" class="nav-btn"><i class="fas fa-location-arrow"></i> 導航</a></div><div class="info-note" onblur="updateItinerary(${index},'note',this.innerText)">${item.note}</div><div class="memo-box ${hasMemo?'show':''}" onblur="updateItinerary(${index},'memo',this.innerText)">${item.memo||""}</div><div class="memo-controls" style="display:none;margin-top:5px;font-size:12px;"><span onclick="toggleMemo(${index})" style="color:#007AFF;cursor:pointer;">${hasMemo?'刪除備忘':'新增備忘'}</span></div></div></div>`;
+                if(isEditing) div.querySelector('.memo-controls').style.display = 'block'; container.appendChild(div);
+            });
+            setEditable(isEditing);
+            if(isEditing) { if(sortableInstance) sortableInstance.destroy(); sortableInstance = new Sortable(container, { handle:'.drag-handle', animation:150, onEnd: function(evt){ const list=appData.itinerary[currentDay]; list.splice(evt.newIndex, 0, list.splice(evt.oldIndex, 1)[0]); triggerSave(); } }); }
         }
 
-        // --- 清單功能 ---
+        function updateLoc(i, v) { if(appData.itinerary[currentDay][i]){ appData.itinerary[currentDay][i].loc=v.trim(); renderSchedule(); triggerSave(); } }
+        function updateTimeText(i, v) { if(appData.itinerary[currentDay][i]){ appData.itinerary[currentDay][i].time=v.trim(); renderSchedule(); triggerSave(); } }
+        function updateItinerary(i, k, v) { if(appData.itinerary[currentDay][i]){ appData.itinerary[currentDay][i][k]=v.trim(); triggerSave(); } }
+        function toggleMemo(i) { const item=appData.itinerary[currentDay][i]; item.memo=item.memo?"":"備忘..."; renderSchedule(); triggerSave(); }
+        function updateType(i, v) { if(v==="ADD_NEW"){ const n=prompt("新標籤："); if(n){appData.activityTypes.push(n); appData.itinerary[currentDay][i].type=n; saveDataToCloud(true); renderSchedule();} else renderSchedule(); } else if(v==="DEL_OPTION"){ const t=prompt("刪除標籤："); if(t&&confirm("刪除？")){appData.activityTypes=appData.activityTypes.filter(x=>x!==t); saveDataToCloud(true); renderSchedule();} else renderSchedule(); } else { appData.itinerary[currentDay][i].type=v; triggerSave(); } }
+
         function renderChecklist() {
-            const container = document.getElementById('checklist-container');
-            container.innerHTML = '';
-            const targetList = currentChecklistType === 'pre' ? appData.checklist_pre : appData.checklist_tour;
-            (targetList || []).forEach((cat, ci) => {
-                let itemsHtml = '';
-                cat.items.forEach((item, ii) => {
-                    itemsHtml += `<div class="check-item ${item.checked?'checked':''}"><div class="custom-checkbox" onclick="toggleCheck(${ci},${ii})"><i>✔</i></div><div class="item-text" onblur="updCheck(${ci},${ii},this.innerText)">${item.text}</div><div class="del-check-btn" onclick="delCheck(${ci},${ii})">✕</div></div>`;
-                });
-                const div = document.createElement('div');
-                div.className = 'checklist-category';
-                div.innerHTML = `<div class="cat-title"><span onblur="updCat(${ci},this.innerText)">${cat.category}</span><span class="del-cat-btn" onclick="delCat(${ci})">刪除</span></div><div>${itemsHtml}</div><div class="add-check-row"><div class="add-check-btn" onclick="addCheck(${ci})">＋ 新增項目</div></div>`;
-                container.appendChild(div);
+            const container = document.getElementById('checklist-container'); container.innerHTML = '';
+            const list = currentChecklistType==='pre'?appData.checklist_pre:appData.checklist_tour;
+            (list||[]).forEach((cat, ci) => {
+                let html = ''; cat.items.forEach((item, ii) => { html += `<div class="check-item ${item.checked?'checked':''}"><div class="custom-checkbox" onclick="toggleCheck(${ci},${ii})"><i>✔</i></div><div class="item-text" onblur="updCheck(${ci},${ii},this.innerText)">${item.text}</div><div class="del-check-btn" onclick="delCheck(${ci},${ii})">✕</div></div>`; });
+                const div = document.createElement('div'); div.className = 'checklist-category'; div.innerHTML = `<div class="cat-title"><span onblur="updCat(${ci},this.innerText)">${cat.category}</span><span class="del-cat-btn" onclick="delCat(${ci})">刪除</span></div><div>${html}</div><div class="add-check-row"><div class="add-check-btn" onclick="addCheck(${ci})">＋ 新增項目</div></div>`; container.appendChild(div);
             });
             setEditable(isEditing);
         }
-        function toggleCheck(ci, ii) { if(isEditing) return; const l=getList(); l[ci].items[ii].checked=!l[ci].items[ii].checked; renderChecklist(); triggerSave(); }
-        function updCheck(ci, ii, v) { getList()[ci].items[ii].text = v.trim(); triggerSave(); }
-        function updCat(ci, v) { getList()[ci].category = v.trim(); triggerSave(); }
-        function delCheck(ci, ii) { if(confirm('刪除？')){ getList()[ci].items.splice(ii,1); renderChecklist(); triggerSave(); }}
+        function toggleCheck(ci, ii) { if(isEditing)return; const l=getList(); l[ci].items[ii].checked=!l[ci].items[ii].checked; renderChecklist(); triggerSave(); }
+        function updCheck(ci, ii, v) { getList()[ci].items[ii].text=v.trim(); triggerSave(); }
+        function updCat(ci, v) { getList()[ci].category=v.trim(); triggerSave(); }
+        function delCheck(ci, ii) { if(confirm("刪除？")){ getList()[ci].items.splice(ii,1); renderChecklist(); triggerSave(); }}
         function addCheck(ci) { getList()[ci].items.push({text:"新項目", checked:false}); renderChecklist(); triggerSave(); }
-        function delCat(ci) { if(confirm('刪除分類？')){ getList().splice(ci,1); renderChecklist(); triggerSave(); }}
+        function delCat(ci) { if(confirm("刪除分類？")){ getList().splice(ci,1); renderChecklist(); triggerSave(); }}
         function addNewCategory() { getList().push({category:"新分類", items:[]}); renderChecklist(); triggerSave(); }
-        function getList() { return currentChecklistType === 'pre' ? appData.checklist_pre : appData.checklist_tour; }
+        function getList() { return currentChecklistType==='pre'?appData.checklist_pre:appData.checklist_tour; }
 
-        // --- 通用 ---
         function toggleEditMode() {
-            if (!isEditing) {
-                const pwd = "8888"; 
-                if (!sessionStorage.getItem('isAuth')) {
-                    const input = prompt("請輸入編輯密碼：");
-                    if (input !== pwd) { alert("密碼錯誤"); return; }
-                    sessionStorage.setItem('isAuth', 'true');
-                }
-            }
+            if(!isEditing && !sessionStorage.getItem('isAuth')) { const p=prompt("密碼："); if(p!=="8888"){alert("錯誤");return;} sessionStorage.setItem('isAuth','true'); }
             isEditing = !isEditing;
-            const btn = document.querySelector('.edit-toggle');
-            document.body.classList.toggle('is-editing', isEditing);
-            btn.classList.toggle('editing', isEditing);
-            
+            document.querySelector('.edit-toggle').classList.toggle('editing', isEditing);
             document.querySelector('.trip-title').contentEditable = isEditing;
             document.querySelector('.trip-subtitle').contentEditable = isEditing;
-
-            setEditable(isEditing);
-            renderSchedule(); renderChecklist();
+            setEditable(isEditing); renderSchedule(); renderChecklist();
         }
         
         function switchDay(d, b) { currentDay=d; document.querySelectorAll('#tabs-itinerary .tab-btn').forEach(e=>e.classList.remove('active')); b.classList.add('active'); renderSchedule(); }
