@@ -325,24 +325,50 @@
             document.body.removeChild(a);
         }
 
-        function uploadData(input) {
+       function uploadData(input) {
             const file = input.files[0];
             if(!file) return;
             const reader = new FileReader();
             reader.onload = function(e) {
                 try {
                     const importedData = JSON.parse(e.target.result);
-                    if(confirm("確定要還原此備份嗎？這將覆蓋目前的行程資料。")) {
+                    if(confirm("確定要還原此備份嗎？目前畫面將被覆蓋。")) {
+                        // 1. 直接更新本地資料 (不等雲端)
                         appData = importedData;
-                        saveDataToCloud(true); // 強制上傳覆蓋雲端
+                        
+                        // 2. 安全檢查：補全可能缺失的欄位 (防止舊備份缺少新功能欄位)
+                        if(!appData.meta) appData.meta = defaultData.meta;
+                        if(!appData.notesList) appData.notesList = [];
+                        if(!appData.expenses) appData.expenses = [];
+                        if(!appData.activityTypes) appData.activityTypes = defaultData.activityTypes;
+
+                        // 3. ★ 關鍵步驟：立即刷新所有畫面 ★
+                        document.querySelector('.trip-title').innerText = appData.meta.title;
+                        document.querySelector('.trip-subtitle').innerText = appData.meta.subtitle;
+                        if(document.getElementById('current-rate')) {
+                            document.getElementById('current-rate').innerText = appData.meta.rate || 0.22;
+                        }
+                        
+                        // 重新產生所有清單與分頁
+                        renderTabs(); 
+                        renderSchedule(); 
+                        renderChecklist(); 
+                        renderExpenses();
+                        
+                        // 4. 最後才在背景默默上傳到雲端 (使用者不用等)
+                        saveDataToCloud(true); 
+                        
                         alert("還原成功！");
-                        location.reload(); // 重新整理頁面
+                        closeSettings(); // 關閉視窗
                     }
                 } catch(err) {
                     alert("檔案格式錯誤，無法還原。");
+                    console.error(err);
                 }
             };
             reader.readAsText(file);
+            // 清空 input，確保下次選同一個檔案也能觸發
+            input.value = '';
         }
 
         // --- Note Logic ---
