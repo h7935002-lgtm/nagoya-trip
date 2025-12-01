@@ -497,7 +497,26 @@
             renderSchedule();
         }
 
+        // --- 修改後的編輯切換功能 (含密碼鎖) ---
         function toggleEditMode() {
+            // 如果目前是瀏覽模式，想要進入編輯模式 -> 檢查密碼
+            if (!isEditing) {
+                // ★ 這裡設定您的密碼，例如 "8888" ★
+                const myPassword = "8888"; 
+                
+                // 檢查是否已經輸入過密碼 (本次瀏覽期間)
+                if (!sessionStorage.getItem('isAuth')) {
+                    const input = prompt("請輸入編輯密碼，才能修改行程：");
+                    if (input !== myPassword) {
+                        alert("密碼錯誤！您只能瀏覽，不能編輯喔 🙅‍♂️");
+                        return; // 密碼錯就停止，不切換模式
+                    }
+                    // 密碼對了，暫存起來，不用一直輸入
+                    sessionStorage.setItem('isAuth', 'true');
+                }
+            }
+
+            // 執行原本的切換邏輯
             isEditing = !isEditing;
             const btnText = document.getElementById('editBtnText');
             const toggleBtn = document.querySelector('.edit-toggle');
@@ -505,7 +524,6 @@
             toggleBtn.classList.toggle('editing', isEditing);
             btnText.innerText = isEditing ? '完成' : '編輯';
             setEditable(isEditing);
-            // 重新渲染以顯示編輯按鈕
             renderSchedule(); 
             renderChecklist();
         }
