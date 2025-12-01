@@ -7,14 +7,14 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
     <style>
-        /* --- UI 設定 --- */
+        /* --- 基礎設定 --- */
         :root { --primary-color: #5856D6; --bg-color: #F5F5FA; --card-bg: #FFFFFF; --danger-color: #FF3B30; --success-color: #34C759; --text-dark: #1C1C1E; --text-gray: #8E8E93; --line-color: #E5E5EA; }
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: var(--bg-color); margin: 0; padding: 0; padding-top: 180px; padding-bottom: 80px; -webkit-tap-highlight-color: transparent; color: var(--text-dark); }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: var(--bg-color); margin: 0; padding: 0; padding-top: 180px; padding-bottom: 50px; -webkit-tap-highlight-color: transparent; color: var(--text-dark); }
 
-        /* Header */
+        /* --- Header --- */
         .header { background: var(--primary-color); padding: 15px 20px 0px 20px; border-bottom-left-radius: 24px; border-bottom-right-radius: 24px; color: white; box-shadow: 0 4px 20px rgba(88, 86, 214, 0.4); position: fixed; top: 0; left: 0; right: 0; z-index: 1000; }
         .header-top-row { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; }
-        .trip-title { font-size: 20px; font-weight: 800; letter-spacing: 0.5px; line-height: 1.2; border-bottom: 1px dashed transparent; }
+        .trip-title { font-size: 22px; font-weight: 800; letter-spacing: 0.5px; line-height: 1.2; border-bottom: 1px dashed transparent; }
         .trip-subtitle { font-size: 13px; opacity: 0.8; margin-top: 4px; font-weight: 500; border-bottom: 1px dashed transparent; display: inline-block; cursor: pointer;}
         
         .controls { display: flex; gap: 6px; }
@@ -39,7 +39,7 @@
         .content { padding: 10px 20px; min-height: 300px; display: none; }
         .content.active { display: block; animation: fadeIn 0.3s; }
 
-        /* Timeline */
+        /* --- Timeline Item & Card (關鍵修正：overflow: visible) --- */
         .timeline-item { position: relative; padding-left: 35px; margin-bottom: 20px; overflow: visible !important; }
         .timeline-item::before { content: ''; position: absolute; left: 16px; top: 25px; bottom: -45px; width: 2px; background: var(--line-color); }
         .timeline-item:last-child::before { display: none; }
@@ -49,39 +49,58 @@
             background: var(--card-bg); border-radius: 20px; padding: 15px; 
             box-shadow: 0 2px 10px rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.02); 
             display: flex; gap: 15px; position: relative; 
-            overflow: visible !important; /* 關鍵修正：避免按鈕被切掉 */
+            overflow: visible !important; /* 防止按鈕被切掉 */
         }
         
-        /* 編輯按鈕：強制顯示修正 */
+        /* 1. 刪除按鈕 (紅色 X) - 預設隱藏 */
         .delete-btn { 
             position: absolute; right: -8px; top: -8px; width: 24px; height: 24px; 
             background: var(--danger-color); color: white; border-radius: 50%; 
             display: none; align-items: center; justify-content: center; 
             box-shadow: 0 2px 5px rgba(0,0,0,0.2); cursor: pointer; z-index: 999; font-size: 12px;
         }
-        body.is-editing .delete-btn { display: flex !important; }
-
-        .add-btn-container { text-align: center; margin-top: 20px; display: none; }
-        body.is-editing .add-btn-container { display: block !important; }
         
+        /* 2. 拖曳手把 - 預設隱藏 */
         .drag-handle { 
             position: absolute; left: -35px; top: 50%; transform: translateY(-50%); 
             color: #CCC; font-size: 18px; padding: 10px; cursor: grab; z-index: 5;
             display: none; 
         }
-        body.is-editing .drag-handle { display: block !important; }
 
+        /* 3. 新增行程按鈕 - 預設隱藏 */
+        .add-btn-container { text-align: center; margin-top: 20px; display: none; }
         .add-btn { background: var(--primary-color); color: white; border: none; padding: 12px 25px; border-radius: 30px; font-size: 14px; font-weight: 600; box-shadow: 0 4px 10px rgba(88,86,214,0.3); }
 
-        /* Layout */
+        /* 4. 標籤選擇器 */
+        .type-badge { margin-top: 6px; padding: 3px 8px; border-radius: 8px; font-size: 10px; font-weight: 600; color: #666; background: #F2F2F7; }
+        .type-select { margin-top: 6px; width: 100%; font-size: 11px; display: none; border: 1px solid #ddd; padding: 2px; border-radius: 4px; }
+
+        /* --- ★★★ 編輯模式觸發區 (統一定義，避免衝突) ★★★ --- */
+        body.is-editing .delete-btn { display: flex !important; }
+        body.is-editing .drag-handle { display: block !important; }
+        body.is-editing .add-btn-container { display: block !important; }
+        body.is-editing .type-badge { display: none !important; }
+        body.is-editing .type-select { display: block !important; }
+        body.is-editing .del-check-btn, 
+        body.is-editing .del-cat-btn, 
+        body.is-editing .add-check-row, 
+        body.is-editing .add-cat-btn { display: block !important; }
+        body.is-editing .info-title, 
+        body.is-editing .info-loc span, 
+        body.is-editing .info-note, 
+        body.is-editing .time,
+        body.is-editing .item-text,
+        body.is-editing .cat-title span,
+        body.is-editing .trip-title,
+        body.is-editing .trip-subtitle { 
+            border-bottom: 1px dashed #CCC; background: rgba(0,0,0,0.02); min-width: 20px; 
+        }
+
+        /* 內容區排版 */
         .time-col { display: flex; flex-direction: column; align-items: center; min-width: 65px; border-right: 1px dashed #EEE; padding-right: 15px; padding-top: 5px; }
         .ampm { font-size: 11px; color: var(--text-gray); font-weight: 500; }
         .time { font-size: 18px; font-weight: 800; color: var(--text-dark); letter-spacing: -0.5px; }
-        .type-badge { margin-top: 6px; padding: 3px 8px; border-radius: 8px; font-size: 10px; font-weight: 600; color: #666; background: #F2F2F7; }
-        .type-select { margin-top: 6px; width: 100%; font-size: 11px; display: none; }
-        body.is-editing .type-badge { display: none; }
-        body.is-editing .type-select { display: block; }
-
+        
         .info-col { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
         .info-title { font-size: 16px; font-weight: 700; color: var(--text-dark); line-height: 1.3; }
         .info-loc { font-size: 12px; color: var(--text-gray); display: flex; align-items: center; gap: 5px; flex-wrap: wrap; }
@@ -92,7 +111,7 @@
 
         /* Checklist */
         .checklist-container { padding: 10px 20px; }
-        .checklist-category { background: white; border-radius: 16px; padding: 15px; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.03); position: relative; }
+        .checklist-category { background: white; border-radius: 16px; padding: 15px; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.03); position: relative;}
         .cat-title { font-weight: 700; color: var(--primary-color); border-bottom: 1px solid #EEE; padding-bottom: 8px; margin-bottom: 8px; display:flex; justify-content:space-between;}
         .check-item { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid #FAFAFA; }
         .custom-checkbox { width: 20px; height: 20px; border: 2px solid #DDD; border-radius: 6px; display: flex; align-items: center; justify-content: center; }
@@ -102,7 +121,6 @@
         .check-item.checked .item-text { text-decoration: line-through; color: #CCC; }
         
         .del-check-btn, .del-cat-btn, .add-check-row, .add-cat-btn { display: none; }
-        body.is-editing .del-check-btn, body.is-editing .del-cat-btn, body.is-editing .add-check-row, body.is-editing .add-cat-btn { display: block; }
         .add-cat-btn { width: 100%; text-align: center; padding: 15px; background: white; border: 2px dashed #DDD; border-radius: 12px; color: #AAA; margin-top: 10px; cursor: pointer;}
         .del-check-btn { color: var(--danger-color); margin-left: auto; cursor: pointer; }
         .del-cat-btn { position: absolute; top: 15px; right: 15px; color: #ccc; font-size: 12px; cursor: pointer; }
@@ -141,8 +159,6 @@
         .modal-btn.secondary { background: #E5E5EA; color: #333; }
         .close-icon { cursor: pointer; color: #999; font-size: 20px;}
 
-        /* Edit Helpers */
-        body.is-editing .info-title, body.is-editing .info-loc span, body.is-editing .info-note, body.is-editing .time { border-bottom: 1px dashed #CCC; background: rgba(0,0,0,0.02); min-width: 20px; }
         #status-indicator { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.8); color: white; padding: 8px 16px; border-radius: 30px; font-size: 12px; z-index: 2000; display: none; }
         #status-indicator.show { display: block; }
         .sortable-ghost { opacity: 0.4; background: #EEE; }
@@ -154,7 +170,7 @@
     <div class="header">
         <div class="header-top-row">
             <div class="title-group">
-                <div class="trip-title" contenteditable="false" onblur="updateTitle(this.innerText)">🇯🇵 名古屋・白川鄉 (v21)</div>
+                <div class="trip-title" contenteditable="false" onblur="updateTitle(this.innerText)">🇯🇵 名古屋・白川鄉 (v22)</div>
                 <div class="trip-subtitle" onclick="openDatePicker()">DEC 05 - DEC 09, 2025</div>
             </div>
             <div class="controls">
@@ -298,9 +314,11 @@
                         if(!appData.expenses) appData.expenses = [];
                         if(!appData.meta) appData.meta = defaultData.meta;
                         if(!appData.activityTypes) appData.activityTypes = defaultData.activityTypes;
+                        
                         document.querySelector('.trip-title').innerText = appData.meta.title;
                         document.querySelector('.trip-subtitle').innerText = appData.meta.subtitle;
                         document.getElementById('current-rate').innerText = appData.meta.rate || 0.22;
+                        
                         renderTabs(); renderSchedule(); renderChecklist(); renderExpenses();
                         if(document.getElementById('notes-list-modal').classList.contains('show')) renderNotesGrid();
                     }
@@ -426,7 +444,7 @@
             document.getElementById('total-twd').innerText = `NT$ ${total.toLocaleString()}`;
         }
         function getPeriod(t) { if(!t||!t.includes(":"))return""; const h=parseInt(t.split(":")[0]); if(h<5)return"深夜"; if(h<11)return"上午"; if(h<14)return"中午"; if(h<18)return"下午"; return"晚上"; }
-        function renderTypeOptions(v) { let o=`<option value="">選擇</option>`; appData.activityTypes.forEach(t=>{o+=`<option value="${t}" ${t===v?'selected':''}>${t}</option>`}); return o+`<option value="ADD_NEW">➕ 新增...</option><option value="DEL_OPTION" style="color:red;">➖ 刪除...</option>`; }
+        function renderTypeOptions(v) { let o=`<option value="">選擇</option>`; appData.activityTypes.forEach(t=>{o+=`<option value="${t}" ${t===v?'selected':''}>${t}</option>`}); return o+`<option value="ADD_NEW">➕ 新增...</option><option value="MANAGE_OPTION" style="color:var(--primary-color);">⚙️ 管理...</option>`; }
         function renderSchedule() {
             const container=document.getElementById('schedule-container'); container.innerHTML='';
             (appData.itinerary[currentDay]||[]).forEach((item, index) => {
@@ -446,7 +464,7 @@
         function updateTimeText(i, v) { if(appData.itinerary[currentDay][i]){ appData.itinerary[currentDay][i].time=v.trim(); renderSchedule(); triggerSave(); } }
         function updateItinerary(i, k, v) { if(appData.itinerary[currentDay][i]){ appData.itinerary[currentDay][i][k]=v.trim(); triggerSave(); } }
         function toggleMemo(i) { const item=appData.itinerary[currentDay][i]; item.memo=item.memo?"":"備忘..."; renderSchedule(); triggerSave(); }
-        function updateType(i, v) { if(v==="ADD_NEW"){const n=prompt("新標籤："); if(n){appData.activityTypes.push(n); appData.itinerary[currentDay][i].type=n; saveDataToCloud(true); renderSchedule();} else renderSchedule();} else if(v==="DEL_OPTION"){const t=prompt("刪除標籤："); if(t&&confirm("刪除？")){appData.activityTypes=appData.activityTypes.filter(x=>x!==t); saveDataToCloud(true); renderSchedule();} else renderSchedule();} else {appData.itinerary[currentDay][i].type=v; triggerSave();} }
+        function updateType(i, v) { if(v==="ADD_NEW"){const n=prompt("新標籤："); if(n){appData.activityTypes.push(n); appData.itinerary[currentDay][i].type=n; saveDataToCloud(true); renderSchedule();} else renderSchedule();} else if(v==="MANAGE_OPTION"){openTagsManager(); renderSchedule();} else {appData.itinerary[currentDay][i].type=v; triggerSave();} }
         function renderChecklist() { const container=document.getElementById('checklist-container'); container.innerHTML=''; const list=currentChecklistType==='pre'?appData.checklist_pre:appData.checklist_tour; (list||[]).forEach((cat, ci)=>{ let h=''; cat.items.forEach((item, ii)=>{ h+=`<div class="check-item ${item.checked?'checked':''}"><div class="custom-checkbox" onclick="toggleCheck(${ci},${ii})"><i>✔</i></div><div class="item-text" onblur="updCheck(${ci},${ii},this.innerText)">${item.text}</div><div class="del-check-btn" onclick="delCheck(${ci},${ii})">✕</div></div>`; }); const div=document.createElement('div'); div.className='checklist-category'; div.innerHTML=`<div class="cat-title"><span onblur="updCat(${ci},this.innerText)">${cat.category}</span><span class="del-cat-btn" onclick="delCat(${ci})">刪除</span></div><div>${h}</div><div class="add-check-row"><div class="add-check-btn" onclick="addCheck(${ci})">＋ 新增項目</div></div>`; container.appendChild(div); }); setEditable(isEditing); }
         function toggleCheck(ci, ii) { if(isEditing)return; const l=getList(); l[ci].items[ii].checked=!l[ci].items[ii].checked; renderChecklist(); triggerSave(); }
         function updCheck(ci, ii, v) { getList()[ci].items[ii].text=v.trim(); triggerSave(); }
