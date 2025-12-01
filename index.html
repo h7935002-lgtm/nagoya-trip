@@ -6,9 +6,8 @@
     <title>名古屋・白川鄉冬旅</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
-    
     <style>
-        /* --- 樣式設定 --- */
+        /* --- 樣式設定 (與之前相同) --- */
         :root { --primary-color: #5856D6; --bg-color: #F2F2F7; --card-bg: #FFFFFF; --danger-color: #FF3B30; --success-color: #34C759; --link-color: #007AFF; --text-gray: #8E8E93; }
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: var(--bg-color); margin: 0; padding: 0; padding-bottom: 90px; -webkit-tap-highlight-color: transparent; -webkit-text-size-adjust: 100%; }
         
@@ -21,7 +20,6 @@
         .page-view { display: none; animation: fadeIn 0.3s; }
         .page-view.active { display: block; }
         
-        /* Tabs */
         .tabs { display: flex; overflow-x: auto; gap: 10px; padding-bottom: 10px; scrollbar-width: none; }
         .tabs::-webkit-scrollbar { display: none; }
         .tab-btn { background: rgba(255,255,255,0.2); border: none; color: white; padding: 8px 16px; border-radius: 12px; min-width: 55px; display: flex; flex-direction: column; align-items: center; cursor: pointer; transition: 0.2s; flex-shrink: 0; }
@@ -33,11 +31,8 @@
         .sub-tab-btn { background: rgba(0,0,0,0.1); color: rgba(255,255,255,0.8); border: none; padding: 6px 15px; border-radius: 20px; font-size: 13px; cursor: pointer; }
         .sub-tab-btn.active { background: white; color: var(--primary-color); font-weight: bold; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
 
-        /* 行程卡片 */
         .content { padding: 20px; min-height: 300px; }
-        .timeline-item { position: relative; padding-left: 10px; margin-bottom: 20px; transition: transform 0.2s; } /* padding-left 調整配合拖曳把手 */
-        
-        /* 左側時間軸線 (調整位置) */
+        .timeline-item { position: relative; padding-left: 10px; margin-bottom: 20px; transition: transform 0.2s; }
         .timeline-item::before { content: ''; position: absolute; left: 24px; top: 15px; bottom: -25px; width: 2px; background: #D1D1D6; }
         .timeline-item:last-child::before { display: none; }
         .timeline-item::after { content: ''; position: absolute; left: 17px; top: 15px; width: 16px; height: 16px; background: var(--primary-color); border-radius: 50%; border: 3px solid #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.1); z-index: 2; }
@@ -45,42 +40,27 @@
         .card { background: var(--card-bg); border-radius: 16px; padding: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); display: flex; flex-direction: column; gap: 10px; position: relative; margin-left: 20px; }
         .card-main { display: flex; align-items: flex-start; gap: 15px; width: 100%; }
 
-        /* 新：拖曳手把 */
-        .drag-handle {
-            position: absolute; left: -35px; top: 50%; transform: translateY(-50%);
-            color: #ccc; font-size: 18px; padding: 10px; cursor: grab;
-            display: none; /* 預設隱藏 */
-        }
+        .drag-handle { position: absolute; left: -35px; top: 50%; transform: translateY(-50%); color: #ccc; font-size: 18px; padding: 10px; cursor: grab; display: none; }
         body.is-editing .drag-handle { display: block; }
         
-        /* 新：時間輸入框 */
-        .time-box { text-align: center; min-width: 55px; display: flex; flex-direction: column; justify-content: center; }
-        .time-input {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            font-size: 18px; font-weight: 700; color: #333;
-            border: none; background: transparent;
-            text-align: center; width: 100%; padding: 0; margin: 0;
-            cursor: pointer;
-        }
-        /* 瀏覽模式下，讓時間看起來像純文字，不可點擊 */
-        body:not(.is-editing) .time-input { pointer-events: none; }
-        /* 編輯模式下，給時間一個提示底色 */
-        body.is-editing .time-input { background: rgba(0,0,0,0.05); border-radius: 6px; }
-
+        /* 回復原本的文字輸入樣式 */
+        .time-box { text-align: center; min-width: 55px; }
+        .time-box .ampm { font-size: 10px; color: #8E8E93; }
+        .time-box .time { font-size: 18px; font-weight: 700; color: #333; }
+        
         .info-box { flex: 1; min-width: 0; }
         .info-title { font-size: 16px; font-weight: 600; color: #000; margin-bottom: 4px; line-height: 1.4; }
         .loc-wrapper { display: flex; align-items: center; gap: 8px; flex-wrap: wrap;}
         .info-loc { font-size: 12px; color: #8E8E93; display: flex; align-items: center; gap: 4px; }
         .map-link { display: inline-flex; align-items: center; gap: 3px; background: rgba(0, 122, 255, 0.1); color: var(--link-color); padding: 2px 8px; border-radius: 6px; font-size: 11px; text-decoration: none; font-weight: 600; white-space: nowrap; }
         .info-note { font-size: 12px; color: #FF9500; margin-top: 4px; line-height: 1.3; }
-        
         .memo-section { width: 100%; background: #FFF9E6; padding: 10px; border-radius: 8px; border-left: 3px solid #FFCC00; font-size: 13px; color: #555; line-height: 1.5; display: none; margin-top: 5px; white-space: pre-wrap; }
         .memo-section.show { display: block; }
         .memo-controls { display: none; gap: 10px; margin-top: 5px; font-size: 12px; }
         .add-memo-btn { color: var(--link-color); cursor: pointer; border: 1px dashed var(--link-color); padding: 4px 8px; border-radius: 4px; display: inline-block;}
         .del-memo-btn { color: var(--danger-color); cursor: pointer; display: inline-block; margin-left: auto;}
         
-        /* 清單樣式 */
+        /* 清單 */
         .checklist-container { padding: 20px; }
         .checklist-category { margin-bottom: 25px; background: white; border-radius: 16px; padding: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); position: relative; }
         .cat-title { font-size: 18px; font-weight: 700; color: var(--primary-color); margin-bottom: 10px; border-bottom: 2px solid #f0f0f0; padding-bottom: 5px; display: flex; justify-content: space-between; align-items: center;}
@@ -93,12 +73,7 @@
         .check-item.checked .item-text { text-decoration: line-through; color: #ccc; }
         .item-text { flex: 1; font-size: 15px; }
         
-        /* 編輯功能顯示 */
-        body.is-editing .memo-controls, 
-        body.is-editing .del-check-btn, 
-        body.is-editing .add-check-row, 
-        body.is-editing .del-cat-btn,
-        body.is-editing .add-cat-btn { display: block; }
+        body.is-editing .memo-controls, body.is-editing .del-check-btn, body.is-editing .add-check-row, body.is-editing .del-cat-btn, body.is-editing .add-cat-btn { display: block; }
         body.is-editing .memo-section { display: block !important; min-height: 40px; border: 1px dashed #ccc; background: #fff;}
         body.is-editing .add-cat-btn { display: block; }
         
@@ -108,15 +83,14 @@
         .del-cat-btn { position: absolute; right: 10px; top: 10px; color: #ccc; font-size: 12px; display: none; cursor: pointer; }
         .add-cat-btn { display: none; width: 100%; padding: 12px; background: white; border: 2px dashed #ccc; color: #888; border-radius: 12px; text-align: center; margin-top: 20px; cursor: pointer; }
 
-        /* 導航列 */
         .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; height: 60px; background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); border-top: 1px solid #e0e0e0; display: flex; justify-content: space-around; align-items: center; z-index: 900; }
         .nav-item { flex: 1; text-align: center; color: var(--text-gray); cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; }
         .nav-item i { font-size: 20px; }
         .nav-item span { font-size: 10px; font-weight: 500; }
         .nav-item.active { color: var(--primary-color); }
         
-        /* 編輯模式通用 */
-        body.is-editing .info-title, body.is-editing .info-loc, body.is-editing .info-note, body.is-editing .cat-title span { border-bottom: 1px dashed #ccc; background: rgba(0,0,0,0.02) !important; padding: 2px; }
+        /* 編輯模式：時間和 ampm 都可以編輯 */
+        body.is-editing .time, body.is-editing .info-title, body.is-editing .info-loc, body.is-editing .info-note, body.is-editing .ampm, body.is-editing .cat-title span { border-bottom: 1px dashed #ccc; background: rgba(0,0,0,0.02) !important; padding: 2px; }
         body.is-editing .map-link { display: none; }
         .delete-btn { position: absolute; right: -10px; top: -10px; background: var(--danger-color); color: white; width: 24px; height: 24px; border-radius: 50%; display: none; justify-content: center; align-items: center; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.2); z-index: 10; }
         body.is-editing .delete-btn { display: flex; }
@@ -126,8 +100,6 @@
         
         #status-indicator { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.8); color: white; padding: 8px 16px; border-radius: 30px; font-size: 12px; transition: 0.3s; z-index: 1000; display: none; align-items: center; gap: 5px; }
         #status-indicator.show { display: flex; }
-        
-        /* 拖曳時的樣式 */
         .sortable-ghost { opacity: 0.4; background: #eee; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
@@ -190,11 +162,11 @@
         };
         if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
-        const tripDocRef = db.collection("trips").doc("nagoya_2025_trip_v10"); 
+        const tripDocRef = db.collection("trips").doc("nagoya_2025_trip_v11"); 
 
         const defaultData = {
             itinerary: {
-                d1: [{ id: 101, time: "11:00", title: "抵達桃園機場", loc: "機場", note: "", memo: "" }],
+                d1: [{ id: 101, ampm: "上午", time: "11:00", title: "抵達桃園機場", loc: "機場", note: "", memo: "" }],
                 d2: [], d3: [], d4: [], d5: [], d6: []
             },
             checklist_pre: [{ category: "必備證件", items: [{ text: "護照", checked: false }] }],
@@ -205,7 +177,7 @@
         let currentChecklistType = 'pre';
         let isEditing = false;
         let appData = JSON.parse(JSON.stringify(defaultData));
-        let sortableInstance = null; // 拖曳實例
+        let sortableInstance = null;
 
         window.onload = function() { initRealtimeSync(); };
 
@@ -216,9 +188,7 @@
                     const remoteData = doc.data();
                     if (!isEditing || !appData.itinerary) {
                         appData = remoteData;
-                        // 相容性檢查：如果舊資料有 ampm，這邊只取 time，time picker 會自動吃 HH:mm
-                        renderSchedule();
-                        renderChecklist();
+                        renderSchedule(); renderChecklist();
                     }
                     showStatus("已同步", false);
                     setTimeout(() => hideStatus(), 2000);
@@ -230,14 +200,23 @@
             if (isEditing && !force) return;
             showStatus("儲存中...", true);
             tripDocRef.set(appData)
-                .then(() => {
-                    showStatus("已儲存至雲端", false);
-                    setTimeout(() => hideStatus(), 2000);
-                })
+                .then(() => { showStatus("已儲存", false); setTimeout(() => hideStatus(), 2000); })
                 .catch((error) => { showStatus("儲存失敗", true); });
         }
 
-        // --- 渲染與拖曳 ---
+        // --- 核心：智慧時間判斷 ---
+        function getPeriod(timeStr) {
+            // timeStr 格式預期為 "HH:mm"
+            if(!timeStr || !timeStr.includes(":")) return "";
+            const hour = parseInt(timeStr.split(":")[0]);
+            if (hour >= 0 && hour < 5) return "深夜";
+            if (hour >= 5 && hour < 11) return "上午";
+            if (hour >= 11 && hour < 14) return "中午";
+            if (hour >= 14 && hour < 18) return "下午";
+            if (hour >= 18 && hour <= 23) return "晚上";
+            return "時段";
+        }
+
         function renderSchedule() {
             const container = document.getElementById('schedule-container');
             container.innerHTML = '';
@@ -252,14 +231,16 @@
 
                 const div = document.createElement('div');
                 div.className = 'timeline-item';
-                div.setAttribute('data-index', index); // 為了拖曳排序識別
+                div.setAttribute('data-index', index);
+                
                 div.innerHTML = `
                     <div class="drag-handle"><i class="fas fa-bars"></i></div>
                     <div class="card">
                         <div class="delete-btn" onclick="deleteItem(${index})"><i class="fas fa-times"></i></div>
                         <div class="card-main">
                             <div class="time-box">
-                                <input type="time" class="time-input" value="${item.time}" onchange="updateTime(${index}, this.value)">
+                                <div class="ampm" onblur="updateItinerary(${index}, 'ampm', this.innerText)">${item.ampm}</div>
+                                <div class="time" onblur="updateTimeText(${index}, this.innerText)">${item.time}</div>
                             </div>
                             <div class="info-box">
                                 <div class="info-title" onblur="updateItinerary(${index}, 'title', this.innerText)">${item.title}</div>
@@ -282,26 +263,46 @@
             });
             setEditable(isEditing);
 
-            // 重新初始化拖曳功能 (僅在編輯模式下生效)
             if (isEditing) {
-                if (sortableInstance) sortableInstance.destroy(); // 清除舊的
+                if (sortableInstance) sortableInstance.destroy();
                 sortableInstance = new Sortable(container, {
-                    handle: '.drag-handle', // 只能拉把手
+                    handle: '.drag-handle',
                     animation: 150,
                     ghostClass: 'sortable-ghost',
                     onEnd: function (evt) {
-                        // 拖曳結束，更新資料陣列順序
                         const list = appData.itinerary[currentDay];
                         const item = list.splice(evt.oldIndex, 1)[0];
                         list.splice(evt.newIndex, 0, item);
-                        // 不存檔，等按完成才存
                     }
                 });
             }
         }
 
+        // --- 互動功能 ---
+        function updateTimeText(i, val) {
+            val = val.trim();
+            if(appData.itinerary[currentDay][i]) {
+                appData.itinerary[currentDay][i].time = val;
+                // 自動更新 AM/PM
+                const newPeriod = getPeriod(val);
+                if(newPeriod) {
+                    appData.itinerary[currentDay][i].ampm = newPeriod;
+                    // 因為這裡不是即時 render，我們手動更新 DOM 讓使用者立刻看到變化
+                    // 找到對應的 ampm div
+                    const items = document.querySelectorAll('.timeline-item');
+                    if(items[i]) {
+                        const ampmDiv = items[i].querySelector('.ampm');
+                        if(ampmDiv) ampmDiv.innerText = newPeriod;
+                    }
+                }
+            }
+        }
+
+        function updateItinerary(i, k, v) { if(appData.itinerary[currentDay][i]) appData.itinerary[currentDay][i][k] = v.trim(); }
+        function toggleMemo(i, s) { if(appData.itinerary[currentDay][i]) appData.itinerary[currentDay][i].memo = s ? "輸入..." : ""; renderSchedule(); }
+
+        // 清單功能
         function renderChecklist() {
-            // (清單渲染邏輯與 V9 相同，為節省篇幅省略，但程式碼中需包含)
             const container = document.getElementById('checklist-container');
             container.innerHTML = '';
             const targetList = currentChecklistType === 'pre' ? appData.checklist_pre : appData.checklist_tour;
@@ -318,14 +319,6 @@
             setEditable(isEditing);
         }
 
-        // --- 互動功能 ---
-        function updateTime(i, val) {
-            if(appData.itinerary[currentDay][i]) appData.itinerary[currentDay][i].time = val;
-        }
-        function updateItinerary(i, k, v) { if(appData.itinerary[currentDay][i]) appData.itinerary[currentDay][i][k] = v.trim(); }
-        function toggleMemo(i, s) { if(appData.itinerary[currentDay][i]) appData.itinerary[currentDay][i].memo = s ? "輸入..." : ""; renderSchedule(); }
-
-        // 清單與分類功能 (同 V9)
         function toggleCheck(ci, ii) { if(isEditing) return; const list = getList(); list[ci].items[ii].checked = !list[ci].items[ii].checked; renderChecklist(); saveDataToCloud(true); }
         function updateCheckItem(c, i, v) { getList()[c].items[i].text = v.trim(); }
         function updateCatTitle(c, v) { getList()[c].category = v.trim(); }
@@ -343,7 +336,7 @@
                     if (input === null || input !== myPassword) { alert("密碼錯誤！"); return; }
                     sessionStorage.setItem('isAuth', 'true');
                 }
-            } else { saveDataToCloud(true); } // 完成時存檔
+            } else { saveDataToCloud(true); }
             isEditing = !isEditing;
             const btnText = document.getElementById('editBtnText');
             const toggleBtn = document.querySelector('.edit-toggle');
@@ -354,7 +347,6 @@
             renderSchedule(); renderChecklist();
         }
 
-        // 通用
         function switchDay(d, b) { currentDay = d; document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active')); b.classList.add('active'); renderSchedule(); }
         function switchChecklistType(t, b) { currentChecklistType = t; document.querySelectorAll('.sub-tab-btn').forEach(el => el.classList.remove('active')); b.classList.add('active'); renderChecklist(); }
         function switchPage(p, b) {
@@ -363,8 +355,8 @@
             if(p === 'itinerary') { document.getElementById('itinerary-tabs').style.display = 'flex'; document.getElementById('checklist-tabs').style.display = 'none'; }
             else { document.getElementById('itinerary-tabs').style.display = 'none'; document.getElementById('checklist-tabs').style.display = 'flex'; }
         }
-        function setEditable(e) { document.querySelectorAll('.info-title, .info-loc, .info-note, .memo-section, .item-text, .cat-title span').forEach(f => { f.contentEditable = e; }); }
-        function addNewItem() { if (!appData.itinerary[currentDay]) appData.itinerary[currentDay] = []; appData.itinerary[currentDay].push({ id: Date.now(), time: "12:00", title: "新行程", loc: "地點", note: "備註", memo: "" }); renderSchedule(); }
+        function setEditable(e) { document.querySelectorAll('.time, .info-title, .info-loc, .info-note, .memo-section, .item-text, .cat-title span').forEach(f => { f.contentEditable = e; }); }
+        function addNewItem() { if (!appData.itinerary[currentDay]) appData.itinerary[currentDay] = []; appData.itinerary[currentDay].push({ id: Date.now(), ampm: "時段", time: "12:00", title: "新行程", loc: "地點", note: "備註", memo: "" }); renderSchedule(); }
         function deleteItem(i) { if(confirm('刪除？')) { appData.itinerary[currentDay].splice(i, 1); renderSchedule(); } }
         function showStatus(m, e) { const el = document.getElementById('status-indicator'); el.innerHTML = e ? `<i class="fas fa-exclamation-circle"></i> ${m}` : `<i class="fas fa-check"></i> ${m}`; el.style.background = e ? 'rgba(255, 59, 48, 0.9)' : 'rgba(0,0,0,0.8)'; el.classList.add('show'); }
         function hideStatus() { document.getElementById('status-indicator').classList.remove('show'); }
