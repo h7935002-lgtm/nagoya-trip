@@ -7,12 +7,35 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
     <style>
-        /* --- UI 設定 --- */
-        :root { --primary-color: #5856D6; --bg-color: #F5F5FA; --card-bg: #FFFFFF; --danger-color: #FF3B30; --success-color: #34C759; --text-dark: #1C1C1E; --text-gray: #8E8E93; --line-color: #E5E5EA; }
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: var(--bg-color); margin: 0; padding: 0; padding-top: 180px; padding-bottom: 50px; -webkit-tap-highlight-color: transparent; color: var(--text-dark); }
+        /* --- UI 風格設定 --- */
+        :root {
+            --primary-color: #5856D6;
+            --bg-color: #F5F5FA;
+            --card-bg: #FFFFFF;
+            --danger-color: #FF3B30;
+            --success-color: #34C759;
+            --text-dark: #1C1C1E;
+            --text-gray: #8E8E93;
+            --line-color: #E5E5EA;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            margin: 0; padding: 0;
+            padding-top: 180px; /* Header 空間 */
+            padding-bottom: 50px;
+            -webkit-tap-highlight-color: transparent;
+            color: var(--text-dark);
+        }
 
-        /* Header */
-        .header { background: var(--primary-color); padding: 15px 20px 0px 20px; border-bottom-left-radius: 24px; border-bottom-right-radius: 24px; color: white; box-shadow: 0 4px 20px rgba(88, 86, 214, 0.4); position: fixed; top: 0; left: 0; right: 0; z-index: 1000; }
+        /* --- Header 固定表頭 --- */
+        .header {
+            background: var(--primary-color);
+            padding: 15px 20px 0px 20px;
+            border-bottom-left-radius: 24px; border-bottom-right-radius: 24px;
+            color: white; box-shadow: 0 4px 20px rgba(88, 86, 214, 0.4);
+            position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+        }
         .header-top-row { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; }
         .trip-title { font-size: 22px; font-weight: 800; letter-spacing: 0.5px; line-height: 1.2; border-bottom: 1px dashed transparent; }
         .trip-subtitle { font-size: 13px; opacity: 0.8; margin-top: 4px; font-weight: 500; border-bottom: 1px dashed transparent; display: inline-block; cursor: pointer;}
@@ -31,29 +54,35 @@
         .tab-btn.active { background: white; color: var(--primary-color); font-weight: bold; transform: scale(1.05); box-shadow: 0 4px 10px rgba(0,0,0,0.2); color: var(--primary-color) !important; }
         .tab-date { font-size: 10px; margin-bottom: 2px; }
         .tab-day { font-size: 16px; font-weight: 800; }
+        
         .sub-tabs { display: none; justify-content: flex-start; gap: 10px; padding: 4px; }
         .sub-tab-btn { background: rgba(0,0,0,0.2); color: rgba(255,255,255,0.8); border: none; padding: 8px 20px; border-radius: 20px; font-size: 14px; font-weight: 600; cursor: pointer; }
         .sub-tab-btn.active { background: white; color: var(--primary-color); }
 
-        /* Content */
+        /* Content Areas */
         .content { padding: 10px 20px; min-height: 300px; display: none; }
         .content.active { display: block; animation: fadeIn 0.3s; }
 
-        /* Timeline */
-        .timeline-item { position: relative; padding-left: 20px; margin-bottom: 20px; }
-        .timeline-item::before { content: ''; position: absolute; left: 9px; top: 25px; bottom: -45px; width: 2px; background: var(--line-color); }
+        /* --- 行程卡片樣式 --- */
+        .timeline-item { position: relative; padding-left: 30px; margin-bottom: 20px; }
+        /* 左側線條 */
+        .timeline-item::before { content: ''; position: absolute; left: 14px; top: 25px; bottom: -45px; width: 2px; background: var(--line-color); }
         .timeline-item:last-child::before { display: none; }
-        .timeline-item::after { content: ''; position: absolute; left: 2px; top: 25px; width: 12px; height: 12px; background: var(--primary-color); border-radius: 50%; border: 2px solid white; box-shadow: 0 0 0 2px var(--primary-color); z-index: 2; }
+        /* 左側圓點 */
+        .timeline-item::after { content: ''; position: absolute; left: 7px; top: 25px; width: 12px; height: 12px; background: var(--primary-color); border-radius: 50%; border: 2px solid white; box-shadow: 0 0 0 2px var(--primary-color); z-index: 2; }
+        
         .card { background: var(--card-bg); border-radius: 20px; padding: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.02); display: flex; gap: 15px; position: relative; }
         
+        /* 左側時間與標籤 */
         .time-col { display: flex; flex-direction: column; align-items: center; min-width: 65px; border-right: 1px dashed #EEE; padding-right: 15px; padding-top: 5px; }
         .ampm { font-size: 11px; color: var(--text-gray); font-weight: 500; }
         .time { font-size: 18px; font-weight: 800; color: var(--text-dark); letter-spacing: -0.5px; }
+        
+        /* 標籤顯示與編輯 */
         .type-badge { margin-top: 6px; padding: 3px 8px; border-radius: 8px; font-size: 10px; font-weight: 600; color: #666; background: #F2F2F7; }
-        .type-select { margin-top: 6px; width: 100%; font-size: 11px; display: none; }
-        body.is-editing .type-badge { display: none; }
-        body.is-editing .type-select { display: block; }
+        .type-select { margin-top: 6px; width: 100%; font-size: 11px; display: none; border: 1px solid #CCC; border-radius: 4px; padding: 2px; }
 
+        /* 右側資訊 */
         .info-col { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
         .info-title { font-size: 16px; font-weight: 700; color: var(--text-dark); line-height: 1.3; }
         .info-loc { font-size: 12px; color: var(--text-gray); display: flex; align-items: center; gap: 5px; flex-wrap: wrap; }
@@ -62,10 +91,35 @@
         .memo-box { margin-top: 8px; background: #FFF9E6; border-left: 3px solid #FFCC00; padding: 8px; border-radius: 6px; font-size: 12px; color: #665C3B; display: none; white-space: pre-wrap;}
         .memo-box.show { display: block; }
 
-        .drag-handle { position: absolute; left: -25px; top: 50%; transform: translateY(-50%); color: #CCC; font-size: 16px; display: none; cursor: grab; padding: 10px;}
-        body.is-editing .drag-handle { display: block; }
-        .delete-btn { position: absolute; right: -8px; top: -8px; width: 22px; height: 22px; background: var(--danger-color); color: white; border-radius: 50%; display: none; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(0,0,0,0.2); cursor: pointer; z-index: 10; font-size: 12px;}
-        body.is-editing .delete-btn { display: flex; }
+        /* --- 編輯模式專用樣式 (關鍵修復) --- */
+        
+        /* 1. 拖曳手把 */
+        .drag-handle { 
+            position: absolute; left: -25px; top: 50%; transform: translateY(-50%); 
+            color: #CCC; font-size: 18px; display: none; cursor: grab; padding: 10px; z-index: 5;
+        }
+        body.is-editing .drag-handle { display: block !important; }
+        
+        /* 2. 刪除按鈕 (紅色 X) */
+        .delete-btn { 
+            position: absolute; right: -8px; top: -8px; width: 22px; height: 22px; 
+            background: var(--danger-color); color: white; border-radius: 50%; 
+            display: none; align-items: center; justify-content: center; 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2); cursor: pointer; z-index: 10; font-size: 12px;
+        }
+        body.is-editing .delete-btn { display: flex !important; }
+
+        /* 3. 新增行程按鈕 */
+        .add-btn-container { display: none; text-align: center; margin-top: 20px; }
+        body.is-editing .add-btn-container { display: block !important; }
+        .add-btn { background: var(--primary-color); color: white; border: none; padding: 10px 20px; border-radius: 30px; font-size: 13px; font-weight: 600; box-shadow: 0 4px 10px rgba(88,86,214,0.3); }
+
+        /* 4. 標籤下拉選單 */
+        body.is-editing .type-badge { display: none; }
+        body.is-editing .type-select { display: block; }
+
+        /* 5. 虛線提示 */
+        body.is-editing .info-title, body.is-editing .info-loc span, body.is-editing .info-note, body.is-editing .time { border-bottom: 1px dashed #CCC; background: rgba(0,0,0,0.02); min-width: 20px; }
 
         /* Checklist */
         .checklist-container { padding: 10px 20px; }
@@ -77,6 +131,13 @@
         .check-item.checked .custom-checkbox i { color: white; font-size: 10px; display: block; }
         .custom-checkbox i { display: none; }
         .check-item.checked .item-text { text-decoration: line-through; color: #CCC; }
+        
+        /* Checklist Edit Buttons */
+        .del-check-btn, .del-cat-btn, .add-check-row, .add-cat-btn { display: none; }
+        body.is-editing .del-check-btn, body.is-editing .del-cat-btn, body.is-editing .add-check-row, body.is-editing .add-cat-btn { display: block; }
+        .add-cat-btn { width: 100%; text-align: center; padding: 15px; background: white; border: 2px dashed #DDD; border-radius: 12px; color: #AAA; margin-top: 10px; cursor: pointer;}
+        .del-check-btn { color: var(--danger-color); margin-left: auto; cursor: pointer; }
+        .add-check-btn { color: var(--link-color); font-size: 13px; padding-top: 5px; cursor: pointer; text-align: center;}
 
         /* Expense */
         .expense-summary { background: white; padding: 20px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 20px; text-align: center; }
@@ -107,19 +168,9 @@
         .modal-box { background: white; padding: 25px; border-radius: 20px; width: 85%; max-width: 400px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2); max-height: 85vh; display: flex; flex-direction: column;}
         .modal-title { font-size: 18px; font-weight: 800; margin-bottom: 15px; color: var(--text-dark); display: flex; justify-content: space-between; align-items: center;}
         .note-editor-area { width: 100%; flex: 1; min-height: 300px; border: 1px solid #EEE; border-radius: 10px; padding: 15px; font-size: 15px; line-height: 1.6; resize: none; box-sizing: border-box; font-family: inherit; background: #FFFDF0;}
-        
         .modal-btn { width: 100%; padding: 12px; border: none; border-radius: 12px; font-weight: 600; cursor: pointer; margin-top: 15px; background: var(--primary-color); color: white;}
         .modal-btn.secondary { background: #E5E5EA; color: #333; }
         .close-icon { cursor: pointer; color: #999; font-size: 20px;}
-
-        /* Edit Helpers */
-        body.is-editing .info-title, body.is-editing .info-loc span, body.is-editing .info-note, body.is-editing .time { border-bottom: 1px dashed #CCC; background: rgba(0,0,0,0.02); min-width: 20px; }
-        .del-check-btn, .del-cat-btn, .add-check-row, .add-cat-btn, .add-btn-container { display: none; }
-        body.is-editing .del-check-btn, body.is-editing .del-cat-btn, body.is-editing .add-check-row, body.is-editing .add-cat-btn, body.is-editing .add-btn-container { display: block; }
-        .add-btn { background: var(--primary-color); color: white; border: none; padding: 10px 20px; border-radius: 30px; font-size: 13px; font-weight: 600; box-shadow: 0 4px 10px rgba(88,86,214,0.3); margin-top: 10px; }
-        .add-cat-btn { width: 100%; text-align: center; padding: 15px; background: white; border: 2px dashed #DDD; border-radius: 12px; color: #AAA; margin-top: 10px; cursor: pointer;}
-        .del-check-btn { color: var(--danger-color); margin-left: auto; cursor: pointer; }
-        .add-check-btn { color: var(--link-color); font-size: 13px; padding-top: 5px; cursor: pointer; text-align: center;}
 
         #status-indicator { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.8); color: white; padding: 8px 16px; border-radius: 30px; font-size: 12px; z-index: 2000; display: none; }
         #status-indicator.show { display: block; }
@@ -245,9 +296,6 @@
         };
         if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
-        
-        // ★★★ 關鍵設定：請固定使用這個 ID，資料就會一直跟著 ★★★
-        // 如果您想要使用之前 V16/V17 的資料，請將下面改回 'nagoya_2025_trip_v16_final'
         const tripDocRef = db.collection("trips").doc("nagoya_2025_trip_permanent"); 
 
         const defaultData = {
@@ -275,13 +323,11 @@
                     const remoteData = doc.data();
                     if (!isEditing || !appData.itinerary) {
                         appData = remoteData;
-                        // Data Integrity Checks
                         if(!appData.notesList) appData.notesList = [];
                         if(!appData.expenses) appData.expenses = [];
                         if(!appData.meta) appData.meta = defaultData.meta;
                         if(!appData.activityTypes) appData.activityTypes = defaultData.activityTypes;
                         
-                        // UI Updates
                         document.querySelector('.trip-title').innerText = appData.meta.title;
                         document.querySelector('.trip-subtitle').innerText = appData.meta.subtitle;
                         document.getElementById('current-rate').innerText = appData.meta.rate || 0.22;
@@ -309,22 +355,16 @@
                 .catch((e) => showStatus("儲存失敗"));
         }
 
-        // --- ⚙️ 備份與還原功能 (V18) ---
+        // --- Settings & Backup ---
         function openSettings() { document.getElementById('settings-modal').classList.add('show'); }
         function closeSettings() { document.getElementById('settings-modal').classList.remove('show'); }
-        
         function downloadData() {
             const dataStr = JSON.stringify(appData, null, 2);
             const blob = new Blob([dataStr], {type: "application/json"});
             const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `trip_backup_${new Date().toISOString().slice(0,10)}.json`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
+            const a = document.createElement('a'); a.href = url; a.download = `trip_backup_${new Date().toISOString().slice(0,10)}.json`;
+            document.body.appendChild(a); a.click(); document.body.removeChild(a);
         }
-
        function uploadData(input) {
             const file = input.files[0];
             if(!file) return;
@@ -333,42 +373,23 @@
                 try {
                     const importedData = JSON.parse(e.target.result);
                     if(confirm("確定要還原此備份嗎？目前畫面將被覆蓋。")) {
-                        // 1. 直接更新本地資料 (不等雲端)
                         appData = importedData;
-                        
-                        // 2. 安全檢查：補全可能缺失的欄位 (防止舊備份缺少新功能欄位)
                         if(!appData.meta) appData.meta = defaultData.meta;
                         if(!appData.notesList) appData.notesList = [];
                         if(!appData.expenses) appData.expenses = [];
                         if(!appData.activityTypes) appData.activityTypes = defaultData.activityTypes;
 
-                        // 3. ★ 關鍵步驟：立即刷新所有畫面 ★
                         document.querySelector('.trip-title').innerText = appData.meta.title;
                         document.querySelector('.trip-subtitle').innerText = appData.meta.subtitle;
-                        if(document.getElementById('current-rate')) {
-                            document.getElementById('current-rate').innerText = appData.meta.rate || 0.22;
-                        }
+                        if(document.getElementById('current-rate')) document.getElementById('current-rate').innerText = appData.meta.rate || 0.22;
                         
-                        // 重新產生所有清單與分頁
-                        renderTabs(); 
-                        renderSchedule(); 
-                        renderChecklist(); 
-                        renderExpenses();
-                        
-                        // 4. 最後才在背景默默上傳到雲端 (使用者不用等)
+                        renderTabs(); renderSchedule(); renderChecklist(); renderExpenses();
                         saveDataToCloud(true); 
-                        
-                        alert("還原成功！");
-                        closeSettings(); // 關閉視窗
+                        alert("還原成功！"); closeSettings(); 
                     }
-                } catch(err) {
-                    alert("檔案格式錯誤，無法還原。");
-                    console.error(err);
-                }
+                } catch(err) { alert("檔案格式錯誤"); console.error(err); }
             };
-            reader.readAsText(file);
-            // 清空 input，確保下次選同一個檔案也能觸發
-            input.value = '';
+            reader.readAsText(file); input.value = '';
         }
 
         // --- Note Logic ---
@@ -456,7 +477,10 @@
                 if(isEditing) div.querySelector('.memo-controls').style.display='block'; container.appendChild(div);
             });
             setEditable(isEditing);
-            if(isEditing) { if(sortableInstance) sortableInstance.destroy(); sortableInstance = new Sortable(container, { handle:'.drag-handle', animation:150, onEnd: function(evt){ const list=appData.itinerary[currentDay]; list.splice(evt.newIndex, 0, list.splice(evt.oldIndex, 1)[0]); triggerSave(); } }); }
+            if(isEditing) { 
+                if(sortableInstance) sortableInstance.destroy(); 
+                sortableInstance = new Sortable(container, { handle:'.drag-handle', animation:150, onEnd: function(evt){ const list=appData.itinerary[currentDay]; list.splice(evt.newIndex, 0, list.splice(evt.oldIndex, 1)[0]); triggerSave(); } }); 
+            }
         }
         function updateLoc(i, v) { if(appData.itinerary[currentDay][i]){ appData.itinerary[currentDay][i].loc=v.trim(); renderSchedule(); triggerSave(); } }
         function updateTimeText(i, v) { if(appData.itinerary[currentDay][i]){ appData.itinerary[currentDay][i].time=v.trim(); renderSchedule(); triggerSave(); } }
