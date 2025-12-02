@@ -185,7 +185,19 @@ function renderTabs() {
         const dayId = `d${i + 1}`; const curr = new Date(start); curr.setDate(start.getDate() + i);
         const btn = document.createElement('button'); btn.className = `tab-btn ${currentDay === dayId ? 'active' : ''}`;
         btn.onclick = function () { switchDay(dayId, this); };
-        btn.innerHTML = `<span class="tab-date">${WEEKDAYS[curr.getDay()]}</span><span class="tab-day">D${i + 1}</span>`;
+
+        // Format: 
+        // 12/2
+        // (二)
+        // D1
+        const dateStr = `${curr.getMonth() + 1}/${curr.getDate()}`;
+        const weekStr = `(${WEEKDAYS[curr.getDay()].replace('週', '')})`;
+
+        btn.innerHTML = `
+            <span class="tab-date">${dateStr}</span>
+            <span class="tab-weekday">${weekStr}</span>
+            <span class="tab-day">D${i + 1}</span>
+        `;
         container.appendChild(btn);
     }
 }
