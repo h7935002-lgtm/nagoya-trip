@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -8,19 +9,25 @@
     <link rel="stylesheet" href="style.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
 </head>
+
 <body>
 
     <div class="header">
         <div class="header-top-row">
             <div class="title-group">
-                <div class="trip-title" contenteditable="false" onblur="updateTitle(this.innerText)">🇯🇵 名古屋・白川鄉 (V31.1)</div>
+                <div class="trip-title" contenteditable="false" onblur="updateTitle(this.innerText)">🇯🇵 名古屋・白川鄉
+                    (V31.1)</div>
                 <div class="trip-subtitle" onclick="openDatePicker()">DEC 05 - DEC 09, 2025</div>
             </div>
             <div class="controls">
-                <button id="btn-view-itinerary" class="view-btn active" onclick="switchView('itinerary')"><i class="far fa-calendar-alt"></i></button>
-                <button id="btn-view-checklist" class="view-btn" onclick="switchView('checklist')"><i class="fas fa-tasks"></i></button>
-                <button id="btn-view-expenses" class="view-btn" onclick="switchView('expenses')"><i class="fas fa-yen-sign"></i></button>
-                <button id="btn-view-notes" class="view-btn" onclick="switchView('notes')"><i class="fas fa-sticky-note"></i></button>
+                <button id="btn-view-itinerary" class="view-btn active" onclick="switchView('itinerary')"><i
+                        class="far fa-calendar-alt"></i></button>
+                <button id="btn-view-checklist" class="view-btn" onclick="switchView('checklist')"><i
+                        class="fas fa-tasks"></i></button>
+                <button id="btn-view-expenses" class="view-btn" onclick="switchView('expenses')"><i
+                        class="fas fa-yen-sign"></i></button>
+                <button id="btn-view-notes" class="view-btn" onclick="switchView('notes')"><i
+                        class="fas fa-sticky-note"></i></button>
                 <button id="btn-settings" class="view-btn" onclick="openSettings()"><i class="fas fa-cog"></i></button>
                 <button class="edit-toggle" onclick="toggleEditMode()"><i class="fas fa-pen"></i></button>
             </div>
@@ -31,10 +38,12 @@
                 <button class="sub-tab-btn active" onclick="switchChecklistType('pre', this)">🏠 行前準備</button>
                 <button class="sub-tab-btn" onclick="switchChecklistType('tour', this)">🧳 旅遊清單</button>
             </div>
-            <div id="tabs-expenses" class="sub-tabs" style="display:none; justify-content:center; color:white; font-size:14px; opacity:0.8;">
+            <div id="tabs-expenses" class="sub-tabs"
+                style="display:none; justify-content:center; color:white; font-size:14px; opacity:0.8;">
                 💰 旅遊記帳小幫手
             </div>
-            <div id="tabs-notes" class="sub-tabs" style="display:none; justify-content:center; color:white; font-size:14px; opacity:0.8;">
+            <div id="tabs-notes" class="sub-tabs"
+                style="display:none; justify-content:center; color:white; font-size:14px; opacity:0.8;">
                 📝 隨身筆記牆
             </div>
         </div>
@@ -57,9 +66,10 @@
                 <div class="total-main" id="total-twd">NT$ 0</div>
                 <div class="total-sec" id="total-jpy">¥ 0</div>
             </div>
-            <div class="rate-setting" onclick="updateExchangeRate()">目前匯率: <span id="current-rate">0.22</span> (點擊修改)</div>
+            <div class="rate-setting" onclick="updateExchangeRate()">目前匯率: <span id="current-rate">0.22</span> (點擊修改)
+            </div>
         </div>
-        
+
         <div class="expense-input-wrapper">
             <div class="exp-row-top">
                 <select id="exp-type" class="exp-select type">
@@ -81,7 +91,7 @@
                 <button class="add-btn-small" onclick="addExpense()">＋</button>
             </div>
         </div>
-        
+
         <div id="expenses-list"></div>
     </div>
 
@@ -94,8 +104,10 @@
         </div>
         <div id="notes-editor-view" style="display:none;">
             <div class="editor-toolbar">
-                <button onclick="closeNoteEditor()" style="font-size:16px;color:#888;border:none;background:none;">< 返回</button>
-                <button onclick="saveAndCloseNoteEditor()" style="font-size:16px;font-weight:bold;border:none;background:none;color:var(--primary-color);">儲存</button>
+                <button onclick="closeNoteEditor()" style="font-size:16px;color:#888;border:none;background:none;">
+                    < 返回</button>
+                        <button onclick="saveAndCloseNoteEditor()"
+                            style="font-size:16px;font-weight:bold;border:none;background:none;color:var(--primary-color);">儲存</button>
             </div>
             <textarea id="current-note-input" class="note-textarea" placeholder="在此輸入內容..."></textarea>
         </div>
@@ -107,7 +119,8 @@
             <span class="close-icon" onclick="closeSettings()">×</span>
             <button class="modal-btn" onclick="downloadData()">📥 匯出備份</button>
             <div style="position:relative; margin-top:10px;">
-                <button class="modal-btn secondary" onclick="document.getElementById('import-file').click()">📤 匯入還原</button>
+                <button class="modal-btn secondary" onclick="document.getElementById('import-file').click()">📤
+                    匯入還原</button>
                 <input type="file" id="import-file" style="display:none" onchange="uploadData(this)">
             </div>
         </div>
@@ -117,8 +130,10 @@
         <div class="modal-box">
             <div class="modal-title">設定旅遊日期</div>
             <span class="close-icon" onclick="closeDatePicker()">×</span>
-            <div style="margin-bottom:15px;"><label>開始</label><input type="date" id="input-start-date" style="width:100%;padding:10px;"></div>
-            <div style="margin-bottom:15px;"><label>結束</label><input type="date" id="input-end-date" style="width:100%;padding:10px;"></div>
+            <div style="margin-bottom:15px;"><label>開始</label><input type="date" id="input-start-date"
+                    style="width:100%;padding:10px;"></div>
+            <div style="margin-bottom:15px;"><label>結束</label><input type="date" id="input-end-date"
+                    style="width:100%;padding:10px;"></div>
             <button class="modal-btn" onclick="saveDateRange()">確定</button>
         </div>
     </div>
@@ -127,7 +142,8 @@
         <div class="modal-box">
             <div class="modal-title">管理標籤選項</div>
             <span class="close-icon" onclick="closeTagsManager()">×</span>
-            <div id="tags-list-container" style="max-height:300px;overflow-y:auto;border:1px solid #eee;border-radius:12px;margin:15px 0;"></div>
+            <div id="tags-list-container"
+                style="max-height:300px;overflow-y:auto;border:1px solid #eee;border-radius:12px;margin:15px 0;"></div>
             <button class="modal-btn" onclick="closeTagsManager()">關閉</button>
         </div>
     </div>
@@ -138,4 +154,5 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
     <script src="script.js"></script>
 </body>
+
 </html>
