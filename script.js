@@ -199,13 +199,77 @@ function saveDateRange() {
 /* --- 核心輔助函式 --- */
 function updateTitle(v) { appData.meta.title=v.trim(); triggerSave(); }
 function updateSubtitle(v) { appData.meta.subtitle=v.trim(); triggerSave(); }
-function addExpense() { const n=document.getElementById('exp-name').value; const a=parseFloat(document.getElementById('exp-amount').value); const c=document.getElementById('exp-curr').value; if(n&&a){appData.expenses.push({id:Date.now(), item:n, amount:a, curr:c}); document.getElementById('exp-name').value=''; document.getElementById('exp-amount').value=''; renderExpenses(); triggerSave();} }
+function addExpense() {
+    const type = document.getElementById('exp-type').value;
+    const name = document.getElementById('exp-name').value;
+    const amount = parseFloat(document.getElementById('exp-amount').value);
+    const curr = document.getElementById('exp-curr').value;
+    
+    if(!name || !amount) { alert("請輸入項目和金額"); return; }
+    
+    // 新增資料結構，包含 type
+    appData.expenses.push({ 
+        id: Date.now(), 
+        type: type, 
+        item: name, 
+        amount: amount, 
+        curr: curr 
+    });
+    
+    // 清空輸入框
+    document.getElementById('exp-name').value = '';
+    document.getElementById('exp-amount').value = '';
+    
+    renderExpenses();
+    triggerSave();
+}
 function deleteExpense(id) { if(confirm("刪除？")){appData.expenses=appData.expenses.filter(x=>x.id!==id); renderExpenses(); triggerSave();} }
 function updateExchangeRate() { const r=prompt("匯率:", appData.meta.rate); if(r&&!isNaN(r)){appData.meta.rate=parseFloat(r); document.getElementById('current-rate').innerText=r; renderExpenses(); triggerSave();} }
 function renderExpenses() { 
-    const list=document.getElementById('expenses-list'); list.innerHTML=''; let total=0; const r=appData.meta.rate||0.22;
-    appData.expenses.forEach(ex=>{ let eq=ex.curr==='TWD'?ex.amount:Math.round(ex.amount*r); total+=eq; list.innerHTML+=`<div class="expense-item"><div class="expense-info"><div class="expense-name">${ex.item} <span class="expense-currency">${ex.curr}</span></div></div><div style="text-align:right;"><div class="expense-price">${ex.curr==='TWD'?'NT$':'¥'} ${ex.amount}</div><div style="font-size:11px; color:#999;">≈ NT$ ${eq}</div></div><div style="margin-left:15px; color:#FF3B30; cursor:pointer;" onclick="deleteExpense(${ex.id})">×</div></div>`; });
-    document.getElementById('total-twd').innerText = `NT$ ${total.toLocaleString()}`;
+    const list = document.getElementById('expenses-list'); 
+    list.innerHTML = ''; 
+    
+    let totalTWD = 0;
+    let totalJPY = 0;
+    const rate = appData.meta.rate || 0.22;
+
+    // 對應圖示
+    const icons = {
+        "飲食": "🍴", "交通": "🚄", "購物": "🛍️", 
+        "住宿": "🏨", "門票": "🎫", "其他": "💸"
+    };
+
+    appData.expenses.forEach(ex => {
+        // 計算匯率
+        let valTWD = ex.curr === 'TWD' ? ex.amount : Math.round(ex.amount * rate);
+        let valJPY = ex.curr === 'JPY' ? ex.amount : Math.round(ex.amount / rate);
+        
+        totalTWD += valTWD;
+        totalJPY += valJPY;
+        
+        let displayAmount = ex.curr === 'TWD' ? `NT$ ${ex.amount}` : `¥ ${ex.amount}`;
+        let subAmount = ex.curr === 'TWD' ? `≈ ¥ ${valJPY}` : `≈ NT$ ${valTWD}`;
+        let icon = icons[ex.type] || "💸";
+
+        list.innerHTML += `
+            <div class="expense-item">
+                <div class="exp-icon">${icon}</div>
+                <div class="expense-info">
+                    <div class="expense-name">${ex.item}</div>
+                    <div class="expense-meta">${ex.type} • ${ex.curr}</div>
+                </div>
+                <div style="text-align:right;">
+                    <div class="expense-price">${displayAmount}</div>
+                    <div style="font-size:11px; color:#999;">${subAmount}</div>
+                </div>
+                <div style="margin-left:15px; color:#FF3B30; cursor:pointer; font-size:18px;" onclick="deleteExpense(${ex.id})">×</div>
+            </div>
+        `;
+    });
+    
+    // 更新上方總覽
+    document.getElementById('total-twd').innerText = `NT$ ${totalTWD.toLocaleString()}`;
+    document.getElementById('total-jpy').innerText = `¥ ${totalJPY.toLocaleString()}`;
 }
 function getPeriod(t) { if(!t||!t.includes(":"))return""; const h=parseInt(t.split(":")[0]); if(h<5)return"深夜"; if(h<11)return"上午"; if(h<14)return"中午"; if(h<18)return"下午"; return"晚上"; }
 function renderTypeOptions(v) { let o=`<option value="">選擇</option>`; appData.activityTypes.forEach(t=>{o+=`<option value="${t}" ${t===v?'selected':''}>${t}</option>`}); return o+`<option value="ADD_NEW">➕ 新增...</option><option value="MANAGE_OPTION" style="color:var(--primary-color);">⚙️ 管理...</option>`; }
