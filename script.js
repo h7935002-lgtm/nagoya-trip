@@ -341,6 +341,7 @@ function toggleEditMode() {
     if(!isEditing && !sessionStorage.getItem('isAuth')) { const p=prompt("密碼："); if(p!=="8888"){alert("錯誤");return;} sessionStorage.setItem('isAuth','true'); }
     isEditing = !isEditing;
     document.querySelector('.edit-toggle').classList.toggle('editing', isEditing);
+    document.body.classList.toggle('is-editing', isEditing);
     document.querySelector('.trip-title').contentEditable = isEditing;
     document.querySelector('.trip-subtitle').style.cursor = isEditing ? "pointer" : "default";
     document.querySelector('.trip-subtitle').style.borderBottom = isEditing ? "1px dashed rgba(255,255,255,0.5)" : "none";
